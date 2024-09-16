@@ -1,0 +1,29 @@
+name: any_chat
+description: 'Anonymous chat application'
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  dio: ^5.6.0
+  flutter_riverpod: ^2.5.1
+  freezed_annotation: ^2.4.4
+  get_it: ^7.7.0
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/
