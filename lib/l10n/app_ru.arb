@@ -1,3 +1,5 @@
 {
-    "app_name": "AnyChat"
+    "app_name": "AnyChat",
+
+    "chat_message_hint": "Написать сообщение..."
 }

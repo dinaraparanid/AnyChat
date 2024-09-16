@@ -1,3 +1,4 @@
+import 'package:any_chat/chat/presentation/ui/message_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -9,15 +10,22 @@ import '../../ui/theme/theme.dart';
 const _burgerButtonSize = 24.0;
 
 class ChatScreen extends StatelessWidget {
-  ChatScreen({super.key});
+  final _messageController = TextEditingController();
+  final _theme = GetIt.instance<AppTheme>();
 
-  final AppTheme _theme = GetIt.instance<AppTheme>();
+  ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) =>
       Scaffold(
         backgroundColor: _theme.colors.background.primary,
         appBar: _chatBar(context),
+        body: Column(
+          children: [
+            const Expanded(child: Text('TODO: chat content')),
+            MessageTextField(controller: _messageController),
+          ],
+        ),
       );
 
   AppBar _chatBar(BuildContext context) =>
