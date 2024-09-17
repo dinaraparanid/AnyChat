@@ -1,55 +1,50 @@
-import 'package:any_chat/chat/presentation/ui/chat.dart';
-import 'package:any_chat/chat/presentation/ui/message_text_field.dart';
-import 'package:any_chat/domain/chat/message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:get_it/get_it.dart';
 
+import 'notifier.dart';
+import 'ui/chat.dart';
+import 'ui/message_text_field.dart';
+import '../../domain/chat/message.dart';
 import '../../ui/theme/images.dart';
 import '../../ui/theme/theme.dart';
 
 const _burgerButtonSize = 24.0;
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends ConsumerWidget {
   final _messageController = TextEditingController();
   final _theme = GetIt.instance<AppTheme>();
-  
-  final _messagesPlaceholder = [
-    Message(
-        text: "I ended up in the back of a flashing car\n"
-            "With the city shining on my face\n"
-            "The lights are blinding me again",
-        timestamp: DateTime(2024, 9, 15, 14, 55),
-    ),
-    Message(
-      text: "I ended up in the back of a flashing car\n"
-          "With the city shining on my face\n"
-          "The lights are blinding me again",
-      timestamp: DateTime(2024, 9, 17, 14, 55),
-    ),
-    Message(
-      text: "I ended up in the back of a flashing car\n"
-          "With the city shining on my face\n"
-          "The lights are blinding me again",
-      timestamp: DateTime(2024, 9, 17, 15, 55),
-    )
-  ];
+  final _provider = GetIt.instance<StateNotifierProvider<ChatNotifier, List<Message>>>();
 
   ChatScreen({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      Scaffold(
-        backgroundColor: _theme.colors.background.primary,
-        appBar: _chatBar(context),
-        body: Column(
-          children: [
-            Expanded(child: Chat(messages: _messagesPlaceholder)),
-            MessageTextField(controller: _messageController),
-          ],
-        ),
-      );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(_provider);
+    final notifier = ref.read(_provider.notifier);
+
+    return Scaffold(
+      backgroundColor: _theme.colors.background.primary,
+      appBar: _chatBar(context),
+      body: Column(
+        children: [
+          Expanded(child: Chat(messages: state)),
+          MessageTextField(
+            controller: _messageController,
+            onSendClick: () => notifier.sendMessage(
+                message: _messageController.text,
+                onSuccess: () {
+                  notifier.loadMessages();
+                  _messageController.clear();
+                },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   AppBar _chatBar(BuildContext context) =>
       AppBar(

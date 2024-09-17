@@ -7,9 +7,7 @@ import '/ui/theme/theme.dart';
 import 'chat/presentation/chat_screen.dart';
 
 class App extends StatelessWidget {
-  App({super.key});
-
-  final AppTheme _theme = GetIt.instance<AppTheme>();
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) => MaterialApp(

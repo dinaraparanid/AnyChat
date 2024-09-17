@@ -23,20 +23,16 @@ class Chat extends StatefulWidget {
 
 class _ChatState extends State<Chat> {
 
-  late Map<String, List<Message>> _messages;
+  late Map<String, List<Message>> _groupedMessages;
 
   final _theme = GetIt.instance<AppTheme>();
 
   @override
-  void initState() {
-    super.initState();
-    _messages = widget.messages.groupListsBy(
+  Widget build(BuildContext context) {
+    _groupedMessages = widget.messages.groupListsBy(
       (m) => m.timestamp.dayMonthYearDottedFormat
     );
-  }
 
-  @override
-  Widget build(BuildContext context) {
     final items = _content();
 
     return Stack(
@@ -60,7 +56,7 @@ class _ChatState extends State<Chat> {
   }
 
   List<Widget> _content() =>
-      _messages.entries
+      _groupedMessages.entries
           .flatMap((entry) =>
             [_date(entry.value.first.timestamp.dayMonthWordFormat)].lock
                 .addAll(entry.value.map((msg) => _message(msg: msg)))

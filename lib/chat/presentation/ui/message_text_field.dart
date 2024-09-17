@@ -11,8 +11,13 @@ const _sendIconSize = 32.0;
 
 class MessageTextField extends StatefulWidget {
   final TextEditingController controller;
+  final void Function() onSendClick;
 
-  const MessageTextField({super.key, required this.controller});
+  const MessageTextField({
+    super.key,
+    required this.controller,
+    required this.onSendClick,
+  });
 
   @override
   State<StatefulWidget> createState() => _MessageTextFieldState();
@@ -78,8 +83,6 @@ class _MessageTextFieldState extends State<MessageTextField> {
       height: _sendIconSize,
     ),
     color: _theme.colors.button.sendIcon,
-    onPressed: () {
-      // TODO: send message
-    },
+    onPressed: widget.onSendClick,
   );
 }

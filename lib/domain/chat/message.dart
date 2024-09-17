@@ -9,4 +9,9 @@ class Message {
     required this.text,
     required this.timestamp
   });
+
+  factory Message.fromJson(dynamic json) => Message(
+    text: json['text'] as String,
+    timestamp: DateTime.parse(json['timestamp'] as String),
+  );
 }
