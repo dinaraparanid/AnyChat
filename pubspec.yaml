@@ -17,6 +17,9 @@ dependencies:
   get_it: ^7.7.0
   cupertino_icons: ^1.0.8
   fpdart: ^1.1.0
+  fast_immutable_collections: ^10.2.4
+  collection: ^1.18.0
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
