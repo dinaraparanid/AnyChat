@@ -5,10 +5,10 @@
 // 'flutter create' template.
 
 // The application's name. By default this is also the title of the Flutter window.
-PRODUCT_NAME = any_chat
+PRODUCT_NAME = Any Chat
 
 // The application's bundle identifier
 PRODUCT_BUNDLE_IDENTIFIER = com.paranid5.anychat.anyChat
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2024 com.paranid5.anychat. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2024 Arseny Savchenko. All rights reserved.

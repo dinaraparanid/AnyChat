@@ -5,12 +5,13 @@
 Anonymous multiplatform chat application written in Flutter
 
 ## **Structure**
-Application utilizes principles of Clean Architecture and Dependency Injection.
+Application utilizes principle of **Clean Architecture**,
+using **Riverpod** library as a state management tool (*notifier* is used as a *view-model*).
+The dependency graph is built manually with *Provider*.
 
-* **Chat** folder contains implementation of chat screen (main screen).
-* **Domain** folder contains abstractions and models that are used by view models (notifiers in riverpod)
-* **Data** folder contains implementations of abstractions
-* **DI** folder contains declarations of dependencies and the implementation of the dependency graph itself
+* **Feature** folder contains implementation of ***screens*** used in app (chat screen).
+* **Domain** folder contains abstractions and models that are used by ***view-models*** (*notifiers* from *Riverpod*)
+* **Data** folder contains ***implementations of abstractions*** and special libraries (***Dio http client***)
 
 ## **Preview**
 
@@ -25,7 +26,6 @@ Application utilizes principles of Clean Architecture and Dependency Injection.
     <li>Flutter 3.18.0</li>
     <li>Dio</li>
     <li>Riverpod</li>
-    <li>GetIt</li>
     <li>FPDart</li>
     <li>L10N (Localization)</li>
 </ul>

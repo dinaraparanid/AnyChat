@@ -1,8 +1,8 @@
+import 'dart:io';
 import 'package:intl/intl.dart';
 
-const _locale = 'ru_RU';
-final _dayMonthYearDottedFormatter = DateFormat('d.M.y', _locale);
-final _dayMonthWordFormatter = DateFormat('d MMMM', _locale);
+final _dayMonthYearDottedFormatter = DateFormat('d.M.y', Platform.localeName);
+final _dayMonthWordFormatter = DateFormat('d MMMM', Platform.localeName);
 final _timeFormatter = DateFormat.Hm();
 
 extension Format on DateTime {

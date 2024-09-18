@@ -1,0 +1,1 @@
+export 'provider/chat_repository.dart';

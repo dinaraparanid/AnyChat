@@ -4,9 +4,7 @@ import 'package:dio/dio.dart';
 
 import 'package:fpdart/fpdart.dart';
 
-import '../../domain/chat/message.dart';
-import '../../domain/chat/message_count.dart';
-import '../../domain/chat/chat_repository.dart';
+import 'package:any_chat/domain/domain.dart';
 
 class ChatRepositoryImpl extends ChatRepository {
   final Dio client;

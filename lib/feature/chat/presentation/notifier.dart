@@ -1,9 +1,6 @@
 import 'dart:async';
-
+import 'package:any_chat/domain/domain.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../domain/chat/chat_repository.dart';
-import '../../domain/chat/message.dart';
 
 const _messagePollingDelay = Duration(seconds: 2);
 
