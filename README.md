@@ -1,16 +1,34 @@
-# any_chat
+**AnyChat**
+-----------------
 
-Anonymous chat application
+## **About App**
+Anonymous multiplatform chat application written in Flutter
 
-## Getting Started
+## **Structure**
+Application utilizes principles of Clean Architecture and Dependency Injection.
 
-This project is a starting point for a Flutter application.
+* **Chat** folder contains implementation of chat screen (main screen).
+* **Domain** folder contains abstractions and models that are used by view models (notifiers in riverpod)
+* **Data** folder contains implementations of abstractions
+* **DI** folder contains declarations of dependencies and the implementation of the dependency graph itself
 
-A few resources to get you started if this is your first Flutter project:
+## **Preview**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+[Full showcase](https://rutube.ru/video/private/3c009757c55e3af2d5922bee2014494d/?p=AOVyBhl9BNE3PccsgPIRuQ)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Preview](assets/preview.png)
+
+## **Stack**
+
+<ul>
+    <li>Dart 3.5.1</li>
+    <li>Flutter 3.18.0</li>
+    <li>Dio</li>
+    <li>Riverpod</li>
+    <li>GetIt</li>
+    <li>FPDart</li>
+    <li>L10N (Localization)</li>
+</ul>
+
+## **License**
+*GNU Public License V 3.0*

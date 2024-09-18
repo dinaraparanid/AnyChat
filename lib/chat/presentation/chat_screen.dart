@@ -13,32 +13,59 @@ import '../../ui/theme/theme.dart';
 
 const _burgerButtonSize = 24.0;
 
-class ChatScreen extends ConsumerWidget {
-  final _messageController = TextEditingController();
-  final _theme = GetIt.instance<AppTheme>();
-  final _provider = GetIt.instance<StateNotifierProvider<ChatNotifier, List<Message>>>();
-
-  ChatScreen({super.key});
+class ChatScreen extends ConsumerStatefulWidget {
+  const ChatScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(_provider);
-    final notifier = ref.read(_provider.notifier);
+  ConsumerState<ConsumerStatefulWidget> createState() => _ChatState();
+}
+
+class _ChatState extends ConsumerState<ChatScreen> {
+  final messageController = TextEditingController();
+  final scrollController = ScrollController();
+
+  final theme = GetIt.instance<AppTheme>();
+  final provider = GetIt.instance<StateNotifierProvider<ChatNotifier, List<Message>>>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    ref
+      .read(provider.notifier)
+      .loadMessages()
+      .then((_) =>
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => scrollToBottom()
+        )
+      );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(provider);
+    final notifier = ref.read(provider.notifier);
 
     return Scaffold(
-      backgroundColor: _theme.colors.background.primary,
-      appBar: _chatBar(context),
+      backgroundColor: theme.colors.background.primary,
+      appBar: chatBar(context),
       body: Column(
         children: [
-          Expanded(child: Chat(messages: state)),
+          Expanded(
+              child: Chat(
+                messages: state,
+                scrollController: scrollController,
+              )
+          ),
           MessageTextField(
-            controller: _messageController,
+            controller: messageController,
             onSendClick: () => notifier.sendMessage(
-                message: _messageController.text,
-                onSuccess: () {
-                  notifier.loadMessages();
-                  _messageController.clear();
-                },
+              message: messageController.text,
+              onSuccess: () {
+                notifier.loadMessages();
+                scrollToBottom();
+                messageController.clear();
+              },
             ),
           ),
         ],
@@ -46,34 +73,40 @@ class ChatScreen extends ConsumerWidget {
     );
   }
 
-  AppBar _chatBar(BuildContext context) =>
-      AppBar(
-        leading: _burgerButton(),
-        title: Text(
-          AppLocalizations.of(context)!.app_name,
-          style: _theme.typography.h.h3.copyWith(
-            color: _theme.colors.text.onTopBar,
-          ),
+  AppBar chatBar(BuildContext context) =>
+    AppBar(
+      leading: burgerButton(),
+      title: Text(
+        AppLocalizations.of(context)!.app_name,
+        style: theme.typography.h.h3.copyWith(
+          color: theme.colors.text.onTopBar,
         ),
-        backgroundColor: _theme.colors.background.topBar,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(_theme.dimensions.radius.extraSmall),
-            bottomRight: Radius.circular(_theme.dimensions.radius.extraSmall),
-          ),
+      ),
+      backgroundColor: theme.colors.background.topBar,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(theme.dimensions.radius.extraSmall),
+          bottomRight: Radius.circular(theme.dimensions.radius.extraSmall),
         ),
-      );
+      ),
+    );
 
-  Widget _burgerButton() =>
-      IconButton(
-        icon: Image(
-          image: AssetImage(AppImages.load('ic_burger.png')),
-          width: _burgerButtonSize,
-          height: _burgerButtonSize,
-        ),
-        color: _theme.colors.button.onTopBar,
-        onPressed: () {
-          // TODO: on click
-        },
-      );
+  Widget burgerButton() =>
+    IconButton(
+      icon: Image(
+        image: AssetImage(AppImages.load('ic_burger.png')),
+        width: _burgerButtonSize,
+        height: _burgerButtonSize,
+      ),
+      color: theme.colors.button.onTopBar,
+      onPressed: () {
+        // TODO: on click
+      },
+    );
+
+  void scrollToBottom() {
+    if (scrollController.hasClients) {
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+    }
+  }
 }

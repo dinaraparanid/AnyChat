@@ -48,7 +48,6 @@ class ChatRepositoryImpl extends ChatRepository {
       );
       return Either.right(null);
     } on Exception catch (e) {
-      print(e);
       return Either.left(e);
     }
   }

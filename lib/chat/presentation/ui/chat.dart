@@ -14,8 +14,13 @@ import '../../../ui/theme/theme.dart';
 
 class Chat extends StatefulWidget {
   final List<Message> messages;
+  final ScrollController scrollController;
 
-  const Chat({super.key, required this.messages});
+  const Chat({
+    super.key,
+    required this.messages,
+    required this.scrollController,
+  });
 
   @override
   State<StatefulWidget> createState() => _ChatState();
@@ -41,6 +46,7 @@ class _ChatState extends State<Chat> {
         ListView.separated(
           shrinkWrap: true,
           itemBuilder: (ctx, idx) => items[idx],
+          controller: widget.scrollController,
           padding: EdgeInsets.only(
             left: _theme.dimensions.padding.extraMedium,
             right: _theme.dimensions.padding.extraMedium,
