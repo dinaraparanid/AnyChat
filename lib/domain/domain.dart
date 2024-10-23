@@ -1,1 +1,1 @@
-export 'chat/chat.dart';
+export 'chat/mod.dart';
