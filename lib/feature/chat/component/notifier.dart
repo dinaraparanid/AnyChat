@@ -1,26 +1,15 @@
-import 'dart:async';
 import 'package:any_chat/domain/domain.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:paging_view/paging_view.dart';
 
-const _messagePollingDelay = Duration(seconds: 2);
-
-class ChatNotifier extends StateNotifier<List<Message>> {
+final class ChatNotifier extends StateNotifier<void> {
   final ChatRepository _repository;
-  Timer? _timer;
+  final DataSource<int, Message> pagingSource;
 
-  ChatNotifier(this._repository) : super([]) {
-    _timer?.cancel();
-    _timer = Timer.periodic(_messagePollingDelay, (_) => loadMessages());
-  }
-
-  Future<void> loadMessages() async {
-    state = await _repository.getMessages().then(
-      (res) => res.fold(
-        (_) => state,
-        (x) => x,
-      )
-    );
-  }
+  ChatNotifier(ChatRepository repository) :
+    _repository = repository,
+    pagingSource = repository.pagingSource,
+    super(null);
 
   void sendMessage({
     required String message,
@@ -31,10 +20,5 @@ class ChatNotifier extends StateNotifier<List<Message>> {
     (_) { onSuccess(); },
   );
 
-  @override
-  void dispose() async {
-    super.dispose();
-    _timer?.cancel();
-    _timer = null;
-  }
+  Future<void> refresh() => pagingSource.refresh();
 }

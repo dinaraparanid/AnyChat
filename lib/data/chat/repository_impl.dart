@@ -1,36 +1,60 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:any_chat/data/chat/provider/url.dart';
+import 'package:any_chat/domain/chat/pager.dart';
 import 'package:any_chat/domain/domain.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:paging_view/paging_view.dart';
+import 'package:web_socket_channel/status.dart' as status;
+import 'package:web_socket_channel/web_socket_channel.dart';
 
-class ChatRepositoryImpl extends ChatRepository {
+final class ChatRepositoryImpl extends ChatRepository {
   final Dio client;
-  final String baseUrl;
+  final ChatPager pager;
 
-  ChatRepositoryImpl({required this.client, required this.baseUrl});
+  final connectivity = Connectivity();
+  WebSocketChannel? socketChannel;
+
+  ChatRepositoryImpl({
+    required this.client,
+    required this.pager,
+  }) {
+    connectivity
+      .onConnectivityChanged
+      .map((types) => types.any((t) =>
+        t == ConnectivityResult.ethernet ||
+            t == ConnectivityResult.mobile ||
+            t == ConnectivityResult.wifi
+      ))
+      .distinct()
+      .listen((isConnected) async {
+        if (isConnected) {
+          socketChannel = WebSocketChannel.connect(
+            Uri.parse('${BaseUrlProvider.webSocketBaseUrl}/messages')
+          );
+
+          await socketChannel!.ready;
+
+          await for (final _ in socketChannel!.stream) {
+            await pager.refresh();
+          }
+        } else {
+          socketChannel?.sink.close(status.goingAway);
+          socketChannel = null;
+        }
+      });
+  }
 
   @override
-  Future<Either<Exception, List<Message>>> getMessages() async {
-    try {
-      final response = await client.get('$baseUrl/messages/');
-      // TODO: убрать эту порнографию, когда будет нормальный сервер
-      final String messagesStr = response.data['detail']['messages'].replaceAll('\'', '"');
-      final messagesJson = jsonDecode(messagesStr);
-      final messages = messagesJson.map(Message.fromJson).toList();
-      return Either.right(messages);
-    } on Exception catch (e) {
-      return Either.left(e);
-    }
-  }
+  DataSource<int, Message> get pagingSource => pager;
 
   @override
   Future<Either<Exception, void>> sendMessage(String text) async {
     try {
-      await client.post(
-          '$baseUrl/messages/',
-          data: { 'text': text, 'timestamp': DateTime.timestamp().toIso8601String() },
-      );
+      socketChannel!.sink.add(text);
       return Either.right(null);
     } on Exception catch (e) {
       return Either.left(e);

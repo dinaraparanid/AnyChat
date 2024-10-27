@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 @immutable
-class AppDimensions {
+final class AppDimensions {
   final AppPadding padding;
   final AppRadius radius;
 
@@ -12,7 +12,7 @@ class AppDimensions {
 }
 
 @immutable
-class AppPadding {
+final class AppPadding {
   final double zero;
   final double minimum;
   final double extraSmall;
@@ -41,7 +41,7 @@ class AppPadding {
 }
 
 @immutable
-class AppRadius {
+final class AppRadius {
   final double minimum;
   final double extraSmall;
   final double small;

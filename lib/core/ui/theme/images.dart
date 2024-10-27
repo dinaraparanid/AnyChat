@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
 @immutable
-class AppImages {
+final class AppImages {
+  const AppImages._();
+
   static String load(String file) => 'assets/$file';
 }

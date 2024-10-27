@@ -10,22 +10,24 @@ const _Timberwolf = Color(0xFFDDD8D2);
 const _Tomato = Color(0xFFFE4A49);
 
 @immutable
-class AppColors {
+final class AppColors {
   final AppBackgroundColors background;
   final AppTextColors text;
   final AppButtonColors button;
+  final AppProgressIndicator indicator;
   final Color error;
 
   const AppColors({
     this.background = const AppBackgroundColors(),
     this.text = const AppTextColors(),
     this.button = const AppButtonColors(),
-    this.error = _Tomato
+    this.indicator = const AppProgressIndicator(),
+    this.error = _Tomato,
   });
 }
 
 @immutable
-class AppBackgroundColors {
+final class AppBackgroundColors {
   final Color primary;
   final Color topBar;
   final Color message;
@@ -42,7 +44,7 @@ class AppBackgroundColors {
 }
 
 @immutable
-class AppTextColors {
+final class AppTextColors {
   final Color onTopBar;
   final Color onMessage;
   final Color onDateLabel;
@@ -57,12 +59,23 @@ class AppTextColors {
 }
 
 @immutable
-class AppButtonColors {
+final class AppButtonColors {
   final Color onTopBar;
   final Color sendIcon;
 
   const AppButtonColors({
     this.onTopBar = _ChineseBlack,
     this.sendIcon = _DarkVanilla,
+  });
+}
+
+@immutable
+final class AppProgressIndicator {
+  final Color primary;
+  final Color background;
+
+  const AppProgressIndicator({
+    this.primary = _DarkVanilla,
+    this.background = _RichBlack,
   });
 }

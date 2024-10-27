@@ -1,1 +1,1 @@
-export 'provider/chat_repository.dart';
+export 'chat/provider/repository.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 @immutable
-class AppTypography {
+final class AppTypography {
   final AppHTypo h;
   final TextStyle body;
   final TextStyle regular;
@@ -38,7 +38,7 @@ class AppTypography {
 }
 
 @immutable
-class AppHTypo {
+final class AppHTypo {
   final TextStyle h1;
   final TextStyle h2;
   final TextStyle h3;

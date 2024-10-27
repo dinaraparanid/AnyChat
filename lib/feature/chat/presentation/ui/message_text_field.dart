@@ -1,4 +1,4 @@
-import 'package:any_chat/ui/theme/theme.dart';
+import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 const _maxLines = 6;
 const _sendIconSize = 32.0;
 
-class MessageTextField extends ConsumerStatefulWidget {
+final class MessageTextField extends ConsumerStatefulWidget {
   final TextEditingController controller;
   final void Function() onSendClick;
 
@@ -21,7 +21,7 @@ class MessageTextField extends ConsumerStatefulWidget {
       _MessageTextFieldState();
 }
 
-class _MessageTextFieldState extends ConsumerState<MessageTextField> {
+final class _MessageTextFieldState extends ConsumerState<MessageTextField> {
 
   @override
   Widget build(BuildContext context) {
@@ -44,15 +44,15 @@ class _MessageTextFieldState extends ConsumerState<MessageTextField> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Expanded(child: textField(context)),
+          Expanded(child: InputTextField(context)),
           SizedBox(width: theme.dimensions.padding.extraMedium),
-          sendButton(),
+          SendButton(),
         ],
       ),
     );
   }
 
-  Widget textField(BuildContext context) {
+  Widget InputTextField(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
 
     return TextField(
@@ -81,7 +81,7 @@ class _MessageTextFieldState extends ConsumerState<MessageTextField> {
     );
   }
 
-  Widget sendButton() {
+  Widget SendButton() {
     final theme = ref.watch(appThemeProvider);
 
     return IconButton(

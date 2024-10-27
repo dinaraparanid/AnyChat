@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:any_chat/domain/chat/page.dart';
 import 'package:any_chat/server/rooting/request/message.dart';
 import 'package:any_chat/utils/functional.dart';
 import 'package:logger/logger.dart';
+
+const _defaultPage = 1;
+const _defaultPerPage = 20;
 
 typedef ConnectedRequest = void Function(WebSocket client);
 typedef MessagingRequest = void Function(String message);
@@ -61,29 +65,18 @@ final class Router {
 
     if (request.method == 'GET' && url.path == MessageRequester.pathMessages) {
       final query = url.queryParameters;
-      final page = query[MessageRequester.queryMessagePage]?.let(int.tryParse);
-      final perPage = query[MessageRequester.queryMessagePerPage]?.let(int.tryParse);
+      final page = query[MessageRequester.queryMessagePage]?.let(int.tryParse) ?? _defaultPage;
+      final perPage = query[MessageRequester.queryMessagePerPage]?.let(int.tryParse) ?? _defaultPerPage;
+      final messagePage = await onUpdateRequest(page, perPage);
 
-      if (page != null && perPage != null) {
-        final messagePage = await onUpdateRequest(page, perPage);
-
-        request.response
-          ..statusCode = HttpStatus.ok
-          ..headers.contentType = ContentType('application', 'json', charset: 'utf-8')
-          ..write(messagePage.toJson())
-          ..close();
-      } else {
-        _onBadRequest(request);
-      }
+      request.response
+        ..statusCode = HttpStatus.ok
+        ..headers.contentType = ContentType('application', 'json', charset: 'utf-8')
+        ..write(jsonEncode(messagePage.toJson()))
+        ..close();
     } else {
       _onUndefinedRequest(request);
     }
-  }
-
-  void _onBadRequest(HttpRequest request) {
-    request.response
-      ..statusCode = HttpStatus.badRequest
-      ..close();
   }
 
   void _onUndefinedRequest(HttpRequest request) {

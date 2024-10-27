@@ -10,7 +10,7 @@ export 'images.dart';
 final appThemeProvider = Provider((ref) => const AppTheme());
 
 @immutable
-class AppTheme {
+final class AppTheme {
   final AppColors colors;
   final AppDimensions dimensions;
   final AppTypography typography;

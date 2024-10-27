@@ -1,7 +1,7 @@
+import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/chat.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message_text_field.dart';
-import 'package:any_chat/feature/chat/component/chat_notifier.dart';
-import 'package:any_chat/ui/theme/theme.dart';
+import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,19 +23,18 @@ class _ChatState extends ConsumerState<ChatScreen> {
   void initState() {
     super.initState();
 
-    ref
-      .read(chatNotifierProvider.notifier)
-      .loadMessages()
-      .then((_) =>
-        WidgetsBinding.instance.addPostFrameCallback(
-          (_) => scrollToBottom()
-        )
-      );
+    // ref
+    //   .read(chatNotifierProvider.notifier)
+    //   .loadMessages()
+    //   .then((_) =>
+    //     WidgetsBinding.instance.addPostFrameCallback(
+    //       (_) => scrollToBottom()
+    //     )
+    //   );
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(chatNotifierProvider);
     final notifier = ref.read(chatNotifierProvider.notifier);
     final theme = ref.watch(appThemeProvider);
 
@@ -45,17 +44,17 @@ class _ChatState extends ConsumerState<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-              child: Chat(
-                messages: state,
-                scrollController: scrollController,
-              )
+            child: Chat(
+              source: notifier.pagingSource,
+              scrollController: scrollController,
+            )
           ),
           MessageTextField(
             controller: messageController,
             onSendClick: () => notifier.sendMessage(
               message: messageController.text,
-              onSuccess: () {
-                notifier.loadMessages();
+              onSuccess: () async {
+                notifier.refresh();
                 scrollToBottom();
                 messageController.clear();
               },
