@@ -1,17 +1,20 @@
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-@immutable
-class Message {
-  final String text;
-  final DateTime timestamp;
+part 'message.freezed.dart';
+part 'message.g.dart';
 
-  const Message({
-    required this.text,
-    required this.timestamp
-  });
+@freezed
+abstract class Message with _$Message {
+  const factory Message({
+    @JsonKey(name: 'id') required int id,
+    @JsonKey(name: 'text') required String text,
+    @JsonKey(name: 'timestamp') required int timestamp,
+  }) = _Message;
 
-  factory Message.fromJson(dynamic json) => Message(
-    text: json['text'] as String,
-    timestamp: DateTime.parse(json['timestamp'] as String),
-  );
+  factory Message.fromJson(Map<String, Object?> json) =>
+    _$MessageFromJson(json);
+}
+
+extension Properties on Message {
+  DateTime get createdAt => DateTime.fromMillisecondsSinceEpoch(timestamp);
 }

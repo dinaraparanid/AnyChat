@@ -1,4 +1,4 @@
-export 'chat_api.dart';
-export 'chat_repository.dart';
+export 'api.dart';
+export 'repository.dart';
 export 'message.dart';
 export 'message_count.dart';

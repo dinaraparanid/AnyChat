@@ -1,3 +1,3 @@
-import 'chat_api.dart';
+import 'api.dart';
 
 abstract class ChatRepository with ChatApi {}

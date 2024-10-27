@@ -1,6 +1,6 @@
 import 'package:any_chat/feature/chat/presentation/ui/chat.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message_text_field.dart';
-import 'package:any_chat/feature/chat/provider/chat_notifier.dart';
+import 'package:any_chat/feature/chat/component/chat_notifier.dart';
 import 'package:any_chat/ui/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

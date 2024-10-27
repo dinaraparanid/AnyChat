@@ -1,4 +1,4 @@
-import 'package:any_chat/data/chat/chat_repository_impl.dart';
+import 'package:any_chat/data/chat/repository_impl.dart';
 import 'package:any_chat/data/provider/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

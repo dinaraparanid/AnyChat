@@ -30,7 +30,7 @@ class _ChatState extends ConsumerState<Chat> {
     final theme = ref.watch(appThemeProvider);
 
     _groupedMessages = widget.messages.groupListsBy(
-      (m) => m.timestamp.dayMonthYearDottedFormat
+      (m) => m.createdAt.dayMonthYearDottedFormat
     );
 
     final items = _content();
@@ -59,7 +59,7 @@ class _ChatState extends ConsumerState<Chat> {
   List<Widget> _content() =>
       _groupedMessages.entries
         .flatMap((entry) =>
-          [_date(entry.value.first.timestamp.dayMonthWordFormat)].lock
+          [_date(entry.value.first.createdAt.dayMonthWordFormat)].lock
             .addAll(entry.value.map((msg) => _message(msg: msg)))
         )
         .toList();
@@ -124,7 +124,7 @@ class _ChatState extends ConsumerState<Chat> {
               SizedBox(height: theme.dimensions.padding.small),
 
               Text(
-                msg.timestamp.timeFormat,
+                msg.createdAt.timeFormat,
                 style: theme.typography.caption.copyWith(
                   color: theme.colors.text.onMessage,
                 ),
