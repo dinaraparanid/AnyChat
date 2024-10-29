@@ -30,6 +30,7 @@ dependencies:
   connectivity_plus: ^6.1.0
   stream_transform: ^2.1.0
   paging_view: ^1.5.5
+  tuple: ^2.0.2
 
 dev_dependencies:
   flutter_test:

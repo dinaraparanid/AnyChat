@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:any_chat/data/chat/provider/url.dart';
-import 'package:any_chat/domain/chat/pager.dart';
+import 'package:any_chat/data/chat/pager.dart';
 import 'package:any_chat/domain/domain.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';

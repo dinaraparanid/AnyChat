@@ -1,9 +1,13 @@
 import 'package:any_chat/core/ui/foundation/progress_indicator.dart';
 import 'package:any_chat/core/ui/theme/theme.dart';
+import 'package:any_chat/data/chat/provider/pager.dart';
 import 'package:any_chat/domain/domain.dart';
 import 'package:any_chat/feature/chat/presentation/ui/date.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message.dart';
+import 'package:any_chat/server/rooting/router.dart';
 import 'package:any_chat/utils/date_time_ext.dart';
+import 'package:any_chat/utils/functional.dart';
+import 'package:any_chat/utils/scroll.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart' as fpdart;
@@ -24,7 +28,37 @@ final class Chat extends ConsumerStatefulWidget {
 }
 
 final class _ChatState extends ConsumerState<Chat> {
-  late Map<String, List<Message>> _groupedMessages;
+  late Map<String, List<Message>> groupedMessages;
+  bool isInitialScrollDone = false;
+  void Function()? scrollListener;
+
+  ScrollController get scrollController => widget.scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    final pagerNotifier = widget.source.notifier;
+
+    pagerNotifier.addListener(scrollListener = () {
+      if (!isInitialScrollDone &&
+          !pagerNotifier.isLoading &&
+          pagerNotifier.values.isNotEmpty
+      ) {
+        setState(() {
+          scrollController.scrollToBottom();
+          isInitialScrollDone = true;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    final pagerNotifier = widget.source.notifier;
+    scrollListener?.let(pagerNotifier.removeListener);
+    scrollListener = null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,10 +76,22 @@ final class _ChatState extends ConsumerState<Chat> {
         PagingList.separated(
           shrinkWrap: true,
           dataSource: widget.source,
-          builder: (context, message, index) => MessageUi(msg: message),
+          builder: (context, message, index) => switch (message.firstForDate) {
+            true => Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                DateUi(dayMonth: message.createdAt.dayMonthWordFormat),
+                SizedBox(height: theme.dimensions.padding.extraMedium),
+                MessageUi(msg: message),
+              ],
+            ),
+
+            _ => MessageUi(msg: message),
+          },
           errorBuilder: (context, err) => Text('TODO: Error stub'),
           initialLoadingWidget: const AppProgressIndicator(),
-          controller: widget.scrollController,
+          controller: scrollController,
           padding: EdgeInsets.only(
             left: theme.dimensions.padding.extraMedium,
             right: theme.dimensions.padding.extraMedium,
@@ -60,7 +106,7 @@ final class _ChatState extends ConsumerState<Chat> {
   }
 
   List<Widget> _content() =>
-    _groupedMessages.entries.flatMap((entry) =>
+    groupedMessages.entries.flatMap((entry) =>
       <Widget>[DateUi(dayMonth: entry.value.first.createdAt.dayMonthWordFormat)] +
         entry.value.map((msg) => MessageUi(msg: msg)).toList(growable: false)
     ).toList(growable: false);

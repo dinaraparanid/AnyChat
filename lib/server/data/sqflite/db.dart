@@ -9,15 +9,7 @@ final class ServerDatabaseProvider {
 
   static Future<ServerDatabaseProvider> init() async {
     final db = SqliteDatabase(path: _dbPath);
-
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS ${ChatTable.tableName} (
-        ${ChatTable.fieldId} INTEGER PRIMARY KEY AUTOINCREMENT,
-        ${ChatTable.fieldText} TEXT NOT NULL,
-        ${ChatTable.fieldTimestamp} INTEGER NOT NULL
-      )
-    ''');
-
+    await db.createChatTableIfNotExists();
     return ServerDatabaseProvider._(db);
   }
 }

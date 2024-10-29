@@ -1,7 +1,8 @@
+import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/chat.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message_text_field.dart';
-import 'package:any_chat/core/ui/theme/theme.dart';
+import 'package:any_chat/utils/scroll.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,27 +21,13 @@ class _ChatState extends ConsumerState<ChatScreen> {
   final scrollController = ScrollController();
 
   @override
-  void initState() {
-    super.initState();
-
-    // ref
-    //   .read(chatNotifierProvider.notifier)
-    //   .loadMessages()
-    //   .then((_) =>
-    //     WidgetsBinding.instance.addPostFrameCallback(
-    //       (_) => scrollToBottom()
-    //     )
-    //   );
-  }
-
-  @override
   Widget build(BuildContext context) {
     final notifier = ref.read(chatNotifierProvider.notifier);
     final theme = ref.watch(appThemeProvider);
 
     return Scaffold(
       backgroundColor: theme.colors.background.primary,
-      appBar: chatBar(context),
+      appBar: ChatBar(context),
       body: Column(
         children: [
           Expanded(
@@ -54,8 +41,7 @@ class _ChatState extends ConsumerState<ChatScreen> {
             onSendClick: () => notifier.sendMessage(
               message: messageController.text,
               onSuccess: () async {
-                notifier.refresh();
-                scrollToBottom();
+                scrollController.scrollToBottom();
                 messageController.clear();
               },
             ),
@@ -65,11 +51,11 @@ class _ChatState extends ConsumerState<ChatScreen> {
     );
   }
 
-  AppBar chatBar(BuildContext context) {
+  AppBar ChatBar(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
 
     return AppBar(
-      leading: burgerButton(),
+      leading: BurgerButton(),
       title: Text(
         AppLocalizations.of(context)!.app_name,
         style: theme.typography.h.h3.copyWith(
@@ -86,7 +72,7 @@ class _ChatState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Widget burgerButton() {
+  Widget BurgerButton() {
     final theme = ref.watch(appThemeProvider);
 
     return IconButton(
@@ -100,11 +86,5 @@ class _ChatState extends ConsumerState<ChatScreen> {
         // TODO: on click
       },
     );
-  }
-
-  void scrollToBottom() {
-    if (scrollController.hasClients) {
-      scrollController.jumpTo(scrollController.position.maxScrollExtent);
-    }
   }
 }

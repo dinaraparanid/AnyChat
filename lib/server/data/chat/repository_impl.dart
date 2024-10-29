@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:any_chat/domain/chat/message.dart';
 import 'package:any_chat/domain/chat/page.dart';
 import 'package:any_chat/server/data/sqflite/chat.dart';
@@ -31,12 +29,8 @@ final class ChatRepositoryImpl extends ChatRepository {
   });
 
   @override
-  Future<void> publishMessage(String message) async => await _db.execute('''
-    INSERT INTO ${ChatTable.tableName} (${ChatTable.fieldText}, ${ChatTable.fieldTimestamp})
-    VALUES (?, ?)
-    ''',
-    [message, DateTime.now().millisecondsSinceEpoch]
-  );
+  Future<void> publishMessage(String message) async =>
+    await _db.insertMessage(message);
 }
 
 extension _Messages on SqliteWriteContext {
@@ -44,32 +38,12 @@ extension _Messages on SqliteWriteContext {
     required int page,
     required int perPage,
   }) async {
-    final pageIndex = max(page - 1, 0);
-    final offset = pageIndex * perPage;
-
-    final res = await execute('''
-      SELECT * FROM ${ChatTable.tableName}
-      LIMIT ? OFFSET ?
-      ''',
-      [perPage, offset],
-    );
-
+    final res = await selectMessagePage(page: page, perPage: perPage);
     return res.map(Message.fromJson).toList(growable: false);
   }
 
   Future<bool> hasNext({
     required int page,
     required int perPage,
-  }) async {
-    final offset = page * perPage;
-
-    final res = await execute('''
-      SELECT * FROM ${ChatTable.tableName}
-      LIMIT 1 OFFSET ?
-      ''',
-      [offset],
-    );
-
-    return res.isNotEmpty;
-  }
+  }) => hasPageAfter(page: page, perPage: perPage);
 }

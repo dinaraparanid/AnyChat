@@ -9,6 +9,7 @@ abstract class Message with _$Message {
     @JsonKey(name: 'id') required int id,
     @JsonKey(name: 'text') required String text,
     @JsonKey(name: 'timestamp') required int timestamp,
+    @JsonKey(name: 'first_for_date') bool? firstForDate,
   }) = _Message;
 
   factory Message.fromJson(Map<String, Object?> json) =>
@@ -16,5 +17,6 @@ abstract class Message with _$Message {
 }
 
 extension Properties on Message {
-  DateTime get createdAt => DateTime.fromMillisecondsSinceEpoch(timestamp);
+  DateTime get createdAt => DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true);
+  bool get isFirstForDate => firstForDate ?? false;
 }

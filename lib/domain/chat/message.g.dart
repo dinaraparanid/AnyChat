@@ -11,6 +11,7 @@ _$MessageImpl _$$MessageImplFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       text: json['text'] as String,
       timestamp: (json['timestamp'] as num).toInt(),
+      firstForDate: json['first_for_date'] as bool?,
     );
 
 Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
@@ -18,4 +19,5 @@ Map<String, dynamic> _$$MessageImplToJson(_$MessageImpl instance) =>
       'id': instance.id,
       'text': instance.text,
       'timestamp': instance.timestamp,
+      'first_for_date': instance.firstForDate,
     };

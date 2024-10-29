@@ -1,9 +1,9 @@
 import 'package:any_chat/server/di/server_module.dart';
 import 'package:any_chat/server/server.dart';
 
-Future<void> _initDI() async {
+Future<void> _initDI() {
   di.registerServerModule();
-  await di.allReady();
+  return di.allReady();
 }
 
 void main() async {
