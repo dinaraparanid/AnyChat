@@ -17,6 +17,9 @@ abstract class Message with _$Message {
 }
 
 extension Properties on Message {
-  DateTime get createdAt => DateTime.fromMillisecondsSinceEpoch(timestamp, isUtc: true);
+  DateTime get createdAt => DateTime
+      .fromMillisecondsSinceEpoch(timestamp, isUtc: true)
+      .toLocal();
+
   bool get isFirstForDate => firstForDate ?? false;
 }

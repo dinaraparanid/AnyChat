@@ -1,17 +1,15 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:any_chat/domain/chat/page.dart';
-import 'package:any_chat/server/rooting/request/message.dart';
-import 'package:any_chat/utils/functional.dart';
+import 'package:any_chat/server/rooting/request/messages_count.dart';
+import 'package:any_chat/server/rooting/request/messages_page.dart';
+import 'package:any_chat/server/rooting/request/query.dart';
 import 'package:logger/logger.dart';
-
-const _defaultPage = 1;
-const _defaultPerPage = 20;
 
 typedef ConnectedRequest = void Function(WebSocket client);
 typedef MessagingRequest = void Function(String message);
-typedef UpdateRequest = Future<MessagePage> Function(int page, int perPage);
+typedef UpdatePagerRequest = Future<MessagePage> Function(int page, int perPage);
+typedef UpdateCounterRequest = Future<int> Function();
 typedef DisconnectedRequest = void Function(WebSocket client);
 
 final class Router {
@@ -22,7 +20,8 @@ final class Router {
     required HttpRequest request,
     required ConnectedRequest onConnected,
     required MessagingRequest onMessaging,
-    required UpdateRequest onUpdateRequest,
+    required UpdatePagerRequest onUpdatePager,
+    required UpdateCounterRequest onUpdateCounter,
     required DisconnectedRequest onDisconnected,
   }) async => switch (request.headers.value('Upgrade')) {
     'websocket' => await _onWebSocketRequest(
@@ -34,7 +33,8 @@ final class Router {
 
     _ => await _onHttpRequest(
       request: request,
-      onUpdateRequest: onUpdateRequest
+      onUpdatePager: onUpdatePager,
+      onUpdateCounter: onUpdateCounter,
     ),
   };
 
@@ -59,21 +59,17 @@ final class Router {
 
   Future<void> _onHttpRequest({
     required HttpRequest request,
-    required UpdateRequest onUpdateRequest,
-}) async {
+    required UpdatePagerRequest onUpdatePager,
+    required UpdateCounterRequest onUpdateCounter,
+  }) async {
     final url = request.uri;
+    final method = request.method;
+    final path = url.path;
 
-    if (request.method == 'GET' && url.path == MessageRequester.pathMessages) {
-      final query = url.queryParameters;
-      final page = query[MessageRequester.queryMessagePage]?.let(int.tryParse) ?? _defaultPage;
-      final perPage = query[MessageRequester.queryMessagePerPage]?.let(int.tryParse) ?? _defaultPerPage;
-      final messagePage = await onUpdateRequest(page, perPage);
-
-      request.response
-        ..statusCode = HttpStatus.ok
-        ..headers.contentType = ContentType('application', 'json', charset: 'utf-8')
-        ..write(jsonEncode(messagePage.toJson()))
-        ..close();
+    if (method == 'GET' && path == MessageQuery.pathMessages) {
+      await onMessagesPage(request: request, onUpdateRequest: onUpdatePager);
+    } else if (method == 'GET' && path == MessageQuery.pathMessagesCount) {
+      await onMessagesCount(request: request, onUpdateCounter: onUpdateCounter);
     } else {
       _onUndefinedRequest(request);
     }

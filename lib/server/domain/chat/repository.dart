@@ -7,4 +7,6 @@ abstract class ChatRepository {
   });
 
   Future<void> publishMessage(String message);
+
+  Future<int> get totalMessageCount;
 }

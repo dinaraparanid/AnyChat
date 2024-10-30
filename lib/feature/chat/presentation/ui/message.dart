@@ -1,6 +1,6 @@
 import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/domain/domain.dart';
-import 'package:any_chat/utils/date_time_ext.dart';
+import 'package:any_chat/utils/date_time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

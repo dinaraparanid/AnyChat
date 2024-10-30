@@ -1,29 +1,47 @@
 import 'package:any_chat/core/ui/theme/theme.dart';
+import 'package:any_chat/feature/chat/component/notifier.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/chat.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message_text_field.dart';
-import 'package:any_chat/utils/scroll.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 
 const _burgerButtonSize = 24.0;
 
-class ChatScreen extends ConsumerStatefulWidget {
+final class ChatScreen extends ConsumerStatefulWidget {
   const ChatScreen({super.key});
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _ChatState();
 }
 
-class _ChatState extends ConsumerState<ChatScreen> {
+final class _ChatState extends ConsumerState<ChatScreen> {
   final messageController = TextEditingController();
-  final scrollController = ScrollController();
+  final scrollController = AutoScrollController();
+  bool isInitialScrollDone = false;
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(chatNotifierProvider);
     final notifier = ref.read(chatNotifierProvider.notifier);
     final theme = ref.watch(appThemeProvider);
+    final pager = notifier.pagingSource;
+
+    if (!isInitialScrollDone) {
+      final scrollPos = state.scrollPosition;
+      final totalCount = state.totalCount;
+
+      if (scrollPos != null && totalCount != null) {
+        final index = scrollPos == ChatState.undefinedPosition
+            ? totalCount
+            : scrollPos;
+
+        scrollController.scrollToIndex(index);
+        isInitialScrollDone = true;
+      }
+    }
 
     return Scaffold(
       backgroundColor: theme.colors.background.primary,
@@ -32,7 +50,7 @@ class _ChatState extends ConsumerState<ChatScreen> {
         children: [
           Expanded(
             child: Chat(
-              source: notifier.pagingSource,
+              source: pager,
               scrollController: scrollController,
             )
           ),
@@ -41,7 +59,7 @@ class _ChatState extends ConsumerState<ChatScreen> {
             onSendClick: () => notifier.sendMessage(
               message: messageController.text,
               onSuccess: () async {
-                scrollController.scrollToBottom();
+                scrollController.scrollToIndex(pager.notifier.values.length);
                 messageController.clear();
               },
             ),

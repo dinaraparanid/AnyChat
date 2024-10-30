@@ -6,4 +6,5 @@ import 'package:paging_view/paging_view.dart';
 mixin ChatApi {
   DataSource<int, Message> get pagingSource;
   Future<Either<Exception, void>> sendMessage(String text);
+  Future<Either<Exception, int>> get messageCount;
 }

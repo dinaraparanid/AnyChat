@@ -66,4 +66,12 @@ extension ChatTableQueries on SqliteWriteContext {
 
     return res.isNotEmpty;
   }
+
+  Future<int> get totalMessageCount async {
+    final res = await execute(
+      'SELECT COUNT(${ChatTable.fieldId}) FROM ${ChatTable.tableName}'
+    );
+
+    return res.rows[0][0] as int;
+  }
 }

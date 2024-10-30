@@ -34,8 +34,9 @@ Future<void> runServer() async {
           client.add(ServerSignal.update);
         }
       },
-      onUpdateRequest: (int page, int perPage) async =>
+      onUpdatePager: (int page, int perPage) async =>
         chatRepository.getMessagePage(page: page, perPage: perPage),
+      onUpdateCounter: () => chatRepository.totalMessageCount,
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:any_chat/utils/functional.dart';
+import 'package:fpdart/fpdart.dart';
 
 extension IterableExt<T> on Iterable<T> {
   Iterable<T> distinct(Function(T)? keySelector) =>

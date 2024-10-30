@@ -1,3 +1,5 @@
+import 'package:any_chat/domain/chat/store.dart';
+
 import 'api.dart';
 
-abstract class ChatRepository with ChatApi {}
+abstract class ChatRepository with ChatApi, ChatStore {}

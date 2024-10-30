@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:any_chat/data/chat/provider/url.dart';
 import 'package:any_chat/data/chat/pager.dart';
+import 'package:any_chat/data/chat/preferences.dart';
+import 'package:any_chat/data/chat/provider/url.dart';
 import 'package:any_chat/domain/domain.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
@@ -14,6 +14,7 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 final class ChatRepositoryImpl extends ChatRepository {
   final Dio client;
   final ChatPager pager;
+  final ChatPreferences preferences;
 
   final connectivity = Connectivity();
   WebSocketChannel? socketChannel;
@@ -21,6 +22,7 @@ final class ChatRepositoryImpl extends ChatRepository {
   ChatRepositoryImpl({
     required this.client,
     required this.pager,
+    required this.preferences,
   }) {
     connectivity
       .onConnectivityChanged
@@ -60,4 +62,24 @@ final class ChatRepositoryImpl extends ChatRepository {
       return Either.left(e);
     }
   }
+
+  @override
+  Future<Either<Exception, int>> get messageCount async {
+    try {
+      final response = await client.get(
+        '${BaseUrlProvider.httpBaseUrl}/messages/count',
+      );
+
+      return Either.right(response.data['count'] as int);
+    } on Exception catch (e) {
+      return Either.left(e);
+    }
+  }
+
+  @override
+  Future<int?> get chatPosition => preferences.chatPosition;
+
+  @override
+  Future<void> storeChatPosition(int position) =>
+    preferences.storeChatPosition(position);
 }

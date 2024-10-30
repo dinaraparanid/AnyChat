@@ -29,8 +29,10 @@ final class ChatRepositoryImpl extends ChatRepository {
   });
 
   @override
-  Future<void> publishMessage(String message) async =>
-    await _db.insertMessage(message);
+  Future<void> publishMessage(String message) => _db.insertMessage(message);
+
+  @override
+  Future<int> get totalMessageCount => _db.totalMessageCount;
 }
 
 extension _Messages on SqliteWriteContext {

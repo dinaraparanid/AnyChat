@@ -31,6 +31,9 @@ dependencies:
   stream_transform: ^2.1.0
   paging_view: ^1.5.5
   tuple: ^2.0.2
+  quiver: ^3.2.2
+  shared_preferences: ^2.3.2
+  scroll_to_index: ^3.0.1
 
 dev_dependencies:
   flutter_test:

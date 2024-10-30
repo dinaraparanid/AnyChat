@@ -1,4 +1,5 @@
 import 'package:any_chat/core/ui/theme/theme.dart';
+import 'package:any_chat/utils/string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,7 +19,7 @@ final class MessageTextField extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _MessageTextFieldState();
+    _MessageTextFieldState();
 }
 
 final class _MessageTextFieldState extends ConsumerState<MessageTextField> {
@@ -30,7 +31,7 @@ final class _MessageTextFieldState extends ConsumerState<MessageTextField> {
     return Container(
       padding: EdgeInsets.only(
         top: theme.dimensions.padding.small,
-        bottom: theme.dimensions.padding.medium,
+        bottom: theme.dimensions.padding.extraLarge,
         right: theme.dimensions.padding.extraMedium,
         left: theme.dimensions.padding.small,
       ),
@@ -78,20 +79,25 @@ final class _MessageTextFieldState extends ConsumerState<MessageTextField> {
       cursorColor: theme.colors.text.onTextField,
       minLines: 1,
       maxLines: _maxLines,
+      onChanged: (_) => setState(() {}),
     );
   }
 
   Widget SendButton() {
     final theme = ref.watch(appThemeProvider);
+    final isNotEnabled = widget.controller.text.isBlank;
+    final activeColor = theme.colors.button.sendIcon;
+    final color = isNotEnabled ? activeColor.withOpacity(0.5) : activeColor;
 
     return IconButton(
       icon: Image(
         image: AssetImage(AppImages.load('ic_send.png')),
         width: _sendIconSize,
         height: _sendIconSize,
+        color: color,
       ),
-      color: theme.colors.button.sendIcon,
-      onPressed: widget.onSendClick,
+      color: color,
+      onPressed: isNotEnabled ? null : widget.onSendClick,
     );
   }
 }
