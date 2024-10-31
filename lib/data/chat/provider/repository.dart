@@ -8,6 +8,6 @@ final chatRepositoryProvider = Provider((ref) =>
   ChatRepositoryImpl(
     client: ref.watch(dioProvider),
     pager: ref.watch(chatPagerProvider),
-    preferences: ref.watch(chatPreferences),
+    preferences: ref.watch(chatPreferencesProvider),
   )
 );

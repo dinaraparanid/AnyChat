@@ -7,7 +7,6 @@ import 'package:any_chat/feature/chat/presentation/ui/message.dart';
 import 'package:any_chat/utils/date_time.dart';
 import 'package:any_chat/utils/functional.dart';
 import 'package:collection/collection.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paging_view/paging_view.dart';
@@ -39,8 +38,9 @@ final class _ChatState extends ConsumerState<Chat> {
     super.initState();
 
     scrollController.addListener(scrollListener = () {
-      final position = scrollController.tagMap.keys.max;
-      ref.read(chatNotifierProvider.notifier).updateChatPosition(position);
+      final keys = scrollController.tagMap.keys;
+      final position = keys.maxOrNull;
+      position?.let(ref.read(chatNotifierProvider.notifier).updateChatPosition);
     });
   }
 

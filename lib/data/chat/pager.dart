@@ -1,3 +1,4 @@
+import 'package:any_chat/data/chat/preferences.dart';
 import 'package:any_chat/data/chat/provider/url.dart';
 import 'package:any_chat/domain/chat/message.dart';
 import 'package:any_chat/domain/chat/page.dart';
@@ -9,26 +10,42 @@ import 'package:tuple/tuple.dart';
 
 final class ChatPager extends DataSource<int, Message> {
   final Dio _client;
+  final ChatPreferences _preferences;
   final Map<String, int> _firstMessagesForDates = {};
-  ChatPager({required Dio client}) : _client = client;
+
+  ChatPager({
+    required Dio client,
+    required ChatPreferences preferences,
+  }) : _client = client, _preferences = preferences;
 
   @override
   Future<LoadResult<int, Message>> load(LoadAction<int> action) async =>
     switch (action) {
       Refresh<int>() => await _fetch(null),
-      Prepend<int>() => const None(),
+      Prepend<int>(key: final page) => await _fetch(page),
       Append<int>(key: final page) => await _fetch(page),
     };
 
   Future<LoadResult<int, Message>> _fetch(int? page) async {
+    final storedPage = await _preferences.chatPage;
+    final queryPage = page ?? storedPage ?? 1;
+    print('BIBA $storedPage');
+
+    if (page != null) {
+      _preferences.storeChatPage(page);
+    }
+
     try {
       final response = await _client.get(
         '${BaseUrlProvider.httpBaseUrl}/messages',
-        queryParameters: {'page': page ?? 1 },
+        queryParameters: {'page': queryPage },
       );
 
       final msgPage = MessagePage.fromJson(response.data);
 
+      // TODO: подумать над логикой,
+      // нужно смотреть, содержит ли предыдущее
+      // сообщение дату предыдущего дня
       msgPage.messages
         .map((m) => Tuple2(m.createdAt.dayMonthYearDottedFormat, m.id))
         .distinct((data) => data.item1)

@@ -38,7 +38,8 @@ final class _ChatState extends ConsumerState<ChatScreen> {
             ? totalCount
             : scrollPos;
 
-        scrollController.scrollToIndex(index);
+        print('BIBA INIT $index');
+        scrollController.scrollToIndex(index, preferPosition: AutoScrollPosition.end);
         isInitialScrollDone = true;
       }
     }
