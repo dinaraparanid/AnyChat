@@ -1,3 +1,4 @@
+import 'package:any_chat/core/config.dart';
 import 'package:any_chat/core/ui/foundation/progress_indicator.dart';
 import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/domain/domain.dart';
@@ -6,7 +7,8 @@ import 'package:any_chat/feature/chat/presentation/ui/date.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message.dart';
 import 'package:any_chat/utils/date_time.dart';
 import 'package:any_chat/utils/functional.dart';
-import 'package:collection/collection.dart';
+import 'package:any_chat/utils/page.dart';
+import 'package:any_chat/utils/scroll.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paging_view/paging_view.dart';
@@ -38,9 +40,11 @@ final class _ChatState extends ConsumerState<Chat> {
     super.initState();
 
     scrollController.addListener(scrollListener = () {
-      final keys = scrollController.tagMap.keys;
-      final position = keys.maxOrNull;
-      position?.let(ref.read(chatNotifierProvider.notifier).updateChatPosition);
+      final position = scrollController.positionIndex;
+      final page = position?.let(getChatPageByPosition) ?? AppConfig.chatFirstPage;
+      final notifier = ref.read(chatNotifierProvider.notifier);
+      position?.let(notifier.updateChatPosition);
+      notifier.updateChatPage(page);
     });
   }
 
@@ -59,7 +63,6 @@ final class _ChatState extends ConsumerState<Chat> {
       alignment: Alignment.bottomCenter,
       children: [
         PagingList.separated(
-          shrinkWrap: true,
           dataSource: source,
           builder: (context, message, index) => AutoScrollTag(
             key: ValueKey(index),

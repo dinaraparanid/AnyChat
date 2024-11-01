@@ -12,6 +12,6 @@ Future<void> onMessagesCount({
   request.response
     ..statusCode = HttpStatus.ok
     ..headers.contentType = ContentType('application', 'json', charset: 'utf-8')
-    ..write(jsonEncode({ 'count': cnt }))
+    ..write(jsonEncode(cnt.toJson()))
     ..close();
 }

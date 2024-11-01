@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:any_chat/domain/chat/count.dart';
 import 'package:any_chat/server/di/server_module.dart';
 import 'package:any_chat/server/domain/chat/repository.dart';
 import 'package:any_chat/server/rooting/router.dart';
 import 'package:any_chat/server/rooting/signal.dart';
+import 'package:any_chat/utils/page.dart';
 import 'package:logger/logger.dart';
 
 final _host = InternetAddress.loopbackIPv4;
@@ -36,7 +38,11 @@ Future<void> runServer() async {
       },
       onUpdatePager: (int page, int perPage) async =>
         chatRepository.getMessagePage(page: page, perPage: perPage),
-      onUpdateCounter: () => chatRepository.totalMessageCount,
+      onUpdateCounter: () async {
+        final total = await chatRepository.totalMessageCount;
+        final pages = getChatPageByPosition(total);
+        return MessageCount(count: total, lastPage: pages);
+      },
     );
   }
 }

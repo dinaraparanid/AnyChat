@@ -1,3 +1,4 @@
+import 'package:any_chat/core/config.dart';
 import 'package:any_chat/data/chat/preferences.dart';
 import 'package:any_chat/data/chat/provider/url.dart';
 import 'package:any_chat/domain/chat/message.dart';
@@ -27,18 +28,15 @@ final class ChatPager extends DataSource<int, Message> {
     };
 
   Future<LoadResult<int, Message>> _fetch(int? page) async {
-    final storedPage = await _preferences.chatPage;
-    final queryPage = page ?? storedPage ?? 1;
-    print('BIBA $storedPage');
-
-    if (page != null) {
-      _preferences.storeChatPage(page);
-    }
+    final queryPage = page
+      ?? await _preferences.currentPage
+      ?? await _preferences.totalPages
+      ?? AppConfig.chatFirstPage;
 
     try {
       final response = await _client.get(
         '${BaseUrlProvider.httpBaseUrl}/messages',
-        queryParameters: {'page': queryPage },
+        queryParameters: {'page': queryPage, 'per_page': AppConfig.chatPageSize },
       );
 
       final msgPage = MessagePage.fromJson(response.data);

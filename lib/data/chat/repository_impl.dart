@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:any_chat/data/chat/pager.dart';
 import 'package:any_chat/data/chat/preferences.dart';
 import 'package:any_chat/data/chat/provider/url.dart';
+import 'package:any_chat/domain/chat/count.dart';
 import 'package:any_chat/domain/domain.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
@@ -38,6 +39,7 @@ final class ChatRepositoryImpl extends ChatRepository {
             Uri.parse('${BaseUrlProvider.webSocketBaseUrl}/messages')
           );
 
+          await messageCount; // update local storage
           await socketChannel!.ready;
 
           await for (final _ in socketChannel!.stream) {
@@ -64,13 +66,15 @@ final class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<Either<Exception, int>> get messageCount async {
+  Future<Either<Exception, MessageCount>> get messageCount async {
     try {
       final response = await client.get(
         '${BaseUrlProvider.httpBaseUrl}/messages/count',
       );
 
-      return Either.right(response.data['count'] as int);
+      final data = MessageCount.fromJson(response.data);
+      await storeTotalPages(data.lastPage);
+      return Either.right(data);
     } on Exception catch (e) {
       return Either.left(e);
     }
@@ -84,8 +88,14 @@ final class ChatRepositoryImpl extends ChatRepository {
     preferences.storeChatPosition(position);
 
   @override
-  Future<int?> get chatPage => preferences.chatPage;
+  Future<int?> get currentPage => preferences.currentPage;
 
   @override
-  Future<void> storeChatPage(int page) => preferences.storeChatPage(page);
+  Future<void> storeCurrentPage(int page) => preferences.storeCurrentPage(page);
+
+  @override
+  Future<int?> get totalPages => preferences.totalPages;
+
+  @override
+  Future<void> storeTotalPages(int pages) => preferences.storeTotalPages(pages);
 }

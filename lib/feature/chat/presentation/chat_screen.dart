@@ -1,5 +1,4 @@
 import 'package:any_chat/core/ui/theme/theme.dart';
-import 'package:any_chat/feature/chat/component/notifier.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/chat.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message_text_field.dart';
@@ -19,30 +18,15 @@ final class ChatScreen extends ConsumerStatefulWidget {
 
 final class _ChatState extends ConsumerState<ChatScreen> {
   final messageController = TextEditingController();
-  final scrollController = AutoScrollController();
-  bool isInitialScrollDone = false;
+  final scrollController = AutoScrollController(
+    // initialScrollOffset: 20000.0, TODO: сохранять позицию
+  );
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(chatNotifierProvider);
     final notifier = ref.read(chatNotifierProvider.notifier);
     final theme = ref.watch(appThemeProvider);
     final pager = notifier.pagingSource;
-
-    if (!isInitialScrollDone) {
-      final scrollPos = state.scrollPosition;
-      final totalCount = state.totalCount;
-
-      if (scrollPos != null && totalCount != null) {
-        final index = scrollPos == ChatState.undefinedPosition
-            ? totalCount
-            : scrollPos;
-
-        print('BIBA INIT $index');
-        scrollController.scrollToIndex(index, preferPosition: AutoScrollPosition.end);
-        isInitialScrollDone = true;
-      }
-    }
 
     return Scaffold(
       backgroundColor: theme.colors.background.primary,

@@ -14,16 +14,16 @@ final class ChatNotifier extends StateNotifier<ChatState> {
     pagingSource = repository.pagingSource,
     super(const ChatState()) {
     repository.chatPosition.then((pos) =>
-      repository.messageCount.then((count) =>
+      repository.messageCount.then((countResponse) =>
         state = state.copyWith(
           scrollPosition: pos ?? ChatState.undefinedPosition,
-          totalCount: count.getOrElse((_) => 0),
+          totalCount: countResponse.map((r) => r.count).getOrElse((_) => 0),
         )
       )
     );
   }
 
-  void sendMessage({
+  Future<void> sendMessage({
     required String message,
     required void Function() onSuccess,
     void Function()? onError,
@@ -38,4 +38,6 @@ final class ChatNotifier extends StateNotifier<ChatState> {
     await _repository.storeChatPosition(position);
     state = state.copyWith(scrollPosition: position);
   }
+
+  Future<void> updateChatPage(int page) => _repository.storeCurrentPage(page);
 }
