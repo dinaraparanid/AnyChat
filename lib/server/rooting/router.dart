@@ -68,7 +68,11 @@ final class Router {
     final path = url.path;
 
     if (method == 'GET' && path == MessageQuery.pathMessages) {
-      await onMessagesPage(request: request, onUpdateRequest: onUpdatePager);
+      await onMessagesPage(
+        request: request,
+        onUpdatePager: onUpdatePager,
+        onUpdateCounter: onUpdateCounter,
+      );
     } else if (method == 'GET' && path == MessageQuery.pathMessagesCount) {
       await onMessagesCount(request: request, onUpdateCounter: onUpdateCounter);
     } else {

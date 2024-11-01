@@ -6,6 +6,7 @@ part 'state.freezed.dart';
 abstract class ChatState with _$ChatState {
   const factory ChatState({
     int? scrollPosition,
+    double? offset,
     int? totalCount,
   }) = _ChatState;
 

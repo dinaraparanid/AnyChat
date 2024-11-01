@@ -29,7 +29,7 @@ final class Chat extends ConsumerStatefulWidget {
 }
 
 final class _ChatState extends ConsumerState<Chat> {
-  bool isInitialScrollDone = false;
+  void Function()? initialScrollListener;
   void Function()? scrollListener;
 
   DataSource<int, Message> get source => widget.source;
@@ -41,9 +41,11 @@ final class _ChatState extends ConsumerState<Chat> {
 
     scrollController.addListener(scrollListener = () {
       final position = scrollController.positionIndex;
+      final offset = scrollController.offset;
       final page = position?.let(getChatPageByPosition) ?? AppConfig.chatFirstPage;
       final notifier = ref.read(chatNotifierProvider.notifier);
       position?.let(notifier.updateChatPosition);
+      notifier.updateChatOffset(offset);
       notifier.updateChatPage(page);
     });
   }

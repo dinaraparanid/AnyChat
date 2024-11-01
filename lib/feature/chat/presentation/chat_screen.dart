@@ -1,3 +1,4 @@
+import 'package:any_chat/core/ui/foundation/progress_indicator.dart';
 import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/chat.dart';
@@ -18,15 +19,25 @@ final class ChatScreen extends ConsumerStatefulWidget {
 
 final class _ChatState extends ConsumerState<ChatScreen> {
   final messageController = TextEditingController();
-  final scrollController = AutoScrollController(
-    // initialScrollOffset: 20000.0, TODO: сохранять позицию
-  );
+  AutoScrollController? scrollController;
+  void Function()? scrollListener;
+  bool isInitialScrollDone = false;
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(chatNotifierProvider);
     final notifier = ref.read(chatNotifierProvider.notifier);
     final theme = ref.watch(appThemeProvider);
     final pager = notifier.pagingSource;
+    final offset = state.offset;
+
+    if (offset == null) {
+      return const AppProgressIndicator();
+    }
+
+    scrollController ??= AutoScrollController(
+      initialScrollOffset: offset,
+    );
 
     return Scaffold(
       backgroundColor: theme.colors.background.primary,
@@ -36,7 +47,7 @@ final class _ChatState extends ConsumerState<ChatScreen> {
           Expanded(
             child: Chat(
               source: pager,
-              scrollController: scrollController,
+              scrollController: scrollController!,
             )
           ),
           MessageTextField(
@@ -44,7 +55,7 @@ final class _ChatState extends ConsumerState<ChatScreen> {
             onSendClick: () => notifier.sendMessage(
               message: messageController.text,
               onSuccess: () async {
-                scrollController.scrollToIndex(pager.notifier.values.length);
+                scrollController!.scrollToIndex(pager.notifier.values.length);
                 messageController.clear();
               },
             ),

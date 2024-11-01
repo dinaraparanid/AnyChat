@@ -30,13 +30,12 @@ final class ChatPager extends DataSource<int, Message> {
   Future<LoadResult<int, Message>> _fetch(int? page) async {
     final queryPage = page
       ?? await _preferences.currentPage
-      ?? await _preferences.totalPages
-      ?? AppConfig.chatFirstPage;
+      ?? await _preferences.totalPages;
 
     try {
       final response = await _client.get(
         '${BaseUrlProvider.httpBaseUrl}/messages',
-        queryParameters: {'page': queryPage, 'per_page': AppConfig.chatPageSize },
+        queryParameters: { 'page': queryPage, 'per_page': AppConfig.chatPageSize },
       );
 
       final msgPage = MessagePage.fromJson(response.data);

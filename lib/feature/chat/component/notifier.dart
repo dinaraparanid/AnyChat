@@ -13,13 +13,18 @@ final class ChatNotifier extends StateNotifier<ChatState> {
     _repository = repository,
     pagingSource = repository.pagingSource,
     super(const ChatState()) {
-    repository.chatPosition.then((pos) =>
-      repository.messageCount.then((countResponse) =>
-        state = state.copyWith(
-          scrollPosition: pos ?? ChatState.undefinedPosition,
-          totalCount: countResponse.map((r) => r.count).getOrElse((_) => 0),
-        )
-      )
+    _init();
+  }
+
+  Future<void> _init() async {
+    final position = await _repository.chatPosition;
+    final offset = await _repository.chatOffset;
+    final countResponse = await _repository.messageCount;
+
+    state = state.copyWith(
+      scrollPosition: position ?? ChatState.undefinedPosition,
+      offset: offset ?? 0,
+      totalCount: countResponse.map((r) => r.count).getOrElse((_) => 0),
     );
   }
 
@@ -37,6 +42,11 @@ final class ChatNotifier extends StateNotifier<ChatState> {
   Future<void> updateChatPosition(int position) async {
     await _repository.storeChatPosition(position);
     state = state.copyWith(scrollPosition: position);
+  }
+
+  Future<void> updateChatOffset(double offset) async {
+    await _repository.storeChatOffset(offset);
+    state = state.copyWith(offset: offset);
   }
 
   Future<void> updateChatPage(int page) => _repository.storeCurrentPage(page);

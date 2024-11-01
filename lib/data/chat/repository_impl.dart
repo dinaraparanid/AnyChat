@@ -88,6 +88,13 @@ final class ChatRepositoryImpl extends ChatRepository {
     preferences.storeChatPosition(position);
 
   @override
+  Future<double?> get chatOffset => preferences.chatOffset;
+
+  @override
+  Future<void> storeChatOffset(double offset) =>
+    preferences.storeChatOffset(offset);
+
+  @override
   Future<int?> get currentPage => preferences.currentPage;
 
   @override
