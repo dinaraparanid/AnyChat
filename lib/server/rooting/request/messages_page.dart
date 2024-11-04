@@ -5,7 +5,7 @@ import 'package:any_chat/server/rooting/request/query.dart';
 import 'package:any_chat/server/rooting/router.dart';
 import 'package:any_chat/utils/functional.dart';
 
-const _defaultPerPage = 20;
+const _defaultPerPage = 50;
 
 Future<void> onMessagesPage({
   required HttpRequest request,

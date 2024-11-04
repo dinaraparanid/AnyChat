@@ -31,7 +31,7 @@ final class _MessageTextFieldState extends ConsumerState<MessageTextField> {
     return Container(
       padding: EdgeInsets.only(
         top: theme.dimensions.padding.small,
-        bottom: theme.dimensions.padding.extraLarge,
+        bottom: theme.dimensions.padding.medium,
         right: theme.dimensions.padding.extraMedium,
         left: theme.dimensions.padding.small,
       ),

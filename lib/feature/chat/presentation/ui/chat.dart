@@ -7,20 +7,21 @@ import 'package:any_chat/feature/chat/presentation/ui/date.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message.dart';
 import 'package:any_chat/utils/date_time.dart';
 import 'package:any_chat/utils/functional.dart';
+import 'package:any_chat/utils/iterable.dart';
 import 'package:any_chat/utils/page.dart';
 import 'package:any_chat/utils/scroll.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:paging_view/paging_view.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
+import 'package:super_paging/super_paging.dart';
 
 final class Chat extends ConsumerStatefulWidget {
-  final DataSource<int, Message> source;
+  final Pager<int, Message> pager;
   final AutoScrollController scrollController;
 
   const Chat({
     super.key,
-    required this.source,
+    required this.pager,
     required this.scrollController,
   });
 
@@ -29,24 +30,25 @@ final class Chat extends ConsumerStatefulWidget {
 }
 
 final class _ChatState extends ConsumerState<Chat> {
-  void Function()? initialScrollListener;
   void Function()? scrollListener;
+  bool isPreparedForInitialScroll = false;
+  bool isInitialScrollDone = false;
 
-  DataSource<int, Message> get source => widget.source;
+  Pager<int, Message> get pager => widget.pager;
   AutoScrollController get scrollController => widget.scrollController;
 
   @override
   void initState() {
     super.initState();
 
-    scrollController.addListener(scrollListener = () {
-      final position = scrollController.positionIndex;
-      final offset = scrollController.offset;
-      final page = position?.let(getChatPageByPosition) ?? AppConfig.chatFirstPage;
-      final notifier = ref.read(chatNotifierProvider.notifier);
-      position?.let(notifier.updateChatPosition);
-      notifier.updateChatOffset(offset);
-      notifier.updateChatPage(page);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scrollController.addListener(scrollListener = () {
+        final position = scrollController.positionIndex;
+        final page = position?.let(getChatPageByPosition) ?? AppConfig.chatFirstPage;
+        final notifier = ref.read(chatNotifierProvider.notifier);
+        position?.let(notifier.updateChatPosition);
+        notifier.updateChatPage(page);
+      });
     });
   }
 
@@ -61,42 +63,58 @@ final class _ChatState extends ConsumerState<Chat> {
   Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
 
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        PagingList.separated(
-          dataSource: source,
-          builder: (context, message, index) => AutoScrollTag(
-            key: ValueKey(index),
-            controller: scrollController,
-            index: index,
-            child: switch (message.firstForDate) {
-              true => Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  DateUi(dayMonth: message.createdAt.dayMonthWordFormat),
-                  SizedBox(height: theme.dimensions.padding.extraMedium),
-                  MessageUi(msg: message),
-                ],
-              ),
+    // TODO: Смысл бага
+    // refresh() очищает весь пейджер,
+    // далее вызывается prepend, который добавляет элементы в начало,
+    // что заставляет позицию меняться (насильно скроллиться)
 
-              _ => MessageUi(msg: message),
+    return Container(
+      color: theme.colors.background.primary,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          PagingListView.separated(
+            pager: pager,
+            findChildIndexCallback: (key) {
+              final messageId = (key as ValueKey<int>).value;
+              return pager.items.positionWhere((msg) => msg.id == messageId);
             },
+            itemBuilder: (context, index) {
+              final message = pager.items.elementAt(index);
+              return AutoScrollTag(
+                key: ValueKey(message.id),
+                controller: scrollController,
+                index: index,
+                child: switch (message.firstForDate) {
+                  true => Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      DateUi(dayMonth: message.createdAt.dayMonthWordFormat),
+                      SizedBox(height: theme.dimensions.padding.extraMedium),
+                      MessageUi(msg: message),
+                    ],
+                  ),
+
+                  _ => MessageUi(msg: message),
+                },
+              );
+            },
+            errorBuilder: (context, err) => const Text('TODO: Error stub'),
+            loadingBuilder: (context) => const AppProgressIndicator(),
+            emptyBuilder: (context) => const Text('TODO: Empty stub'),
+            controller: scrollController,
+            padding: EdgeInsets.only(
+              left: theme.dimensions.padding.extraMedium,
+              right: theme.dimensions.padding.extraMedium,
+              top: theme.dimensions.padding.small,
+              bottom: theme.dimensions.padding.small,
+            ),
+            separatorBuilder: (ctx, idx) =>
+                SizedBox(height: theme.dimensions.padding.extraMedium),
           ),
-          errorBuilder: (context, err) => Text('TODO: Error stub'),
-          initialLoadingWidget: const AppProgressIndicator(),
-          controller: scrollController,
-          padding: EdgeInsets.only(
-            left: theme.dimensions.padding.extraMedium,
-            right: theme.dimensions.padding.extraMedium,
-            top: theme.dimensions.padding.small,
-            bottom: theme.dimensions.padding.small,
-          ),
-          separatorBuilder: (ctx, idx) =>
-            SizedBox(height: theme.dimensions.padding.extraMedium),
-        )
-      ],
+        ],
+      ),
     );
   }
 }

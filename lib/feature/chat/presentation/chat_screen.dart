@@ -1,4 +1,3 @@
-import 'package:any_chat/core/ui/foundation/progress_indicator.dart';
 import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/chat.dart';
@@ -19,48 +18,47 @@ final class ChatScreen extends ConsumerStatefulWidget {
 
 final class _ChatState extends ConsumerState<ChatScreen> {
   final messageController = TextEditingController();
-  AutoScrollController? scrollController;
-  void Function()? scrollListener;
-  bool isInitialScrollDone = false;
+  final scrollController = AutoScrollController();
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(chatNotifierProvider);
     final notifier = ref.read(chatNotifierProvider.notifier);
     final theme = ref.watch(appThemeProvider);
-    final pager = notifier.pagingSource;
-    final offset = state.offset;
-
-    if (offset == null) {
-      return const AppProgressIndicator();
-    }
-
-    scrollController ??= AutoScrollController(
-      initialScrollOffset: offset,
-    );
+    final pager = notifier.pager;
 
     return Scaffold(
       backgroundColor: theme.colors.background.primary,
+      resizeToAvoidBottomInset: true,
       appBar: ChatBar(context),
-      body: Column(
-        children: [
-          Expanded(
-            child: Chat(
-              source: pager,
-              scrollController: scrollController!,
-            )
+      body: Container(
+        color: theme.colors.background.textField,
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Chat(
+                  pager: pager,
+                  scrollController: scrollController,
+                )
+              ),
+              MessageTextField(
+                controller: messageController,
+                onSendClick: () => notifier.sendMessage(
+                  message: messageController.text,
+                  onSuccess: () {
+                    // scrollController.animateTo(
+                    //   scrollController.position.maxScrollExtent,
+                    //   duration: const Duration(milliseconds: 300),
+                    //   curve: Curves.linearToEaseOut,
+                    // );
+
+                    messageController.clear();
+                  },
+                ),
+              ),
+            ],
           ),
-          MessageTextField(
-            controller: messageController,
-            onSendClick: () => notifier.sendMessage(
-              message: messageController.text,
-              onSuccess: () async {
-                scrollController!.scrollToIndex(pager.notifier.values.length);
-                messageController.clear();
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

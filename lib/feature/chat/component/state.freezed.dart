@@ -17,7 +17,6 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$ChatState {
   int? get scrollPosition => throw _privateConstructorUsedError;
-  double? get offset => throw _privateConstructorUsedError;
   int? get totalCount => throw _privateConstructorUsedError;
 
   /// Create a copy of ChatState
@@ -32,7 +31,7 @@ abstract class $ChatStateCopyWith<$Res> {
   factory $ChatStateCopyWith(ChatState value, $Res Function(ChatState) then) =
       _$ChatStateCopyWithImpl<$Res, ChatState>;
   @useResult
-  $Res call({int? scrollPosition, double? offset, int? totalCount});
+  $Res call({int? scrollPosition, int? totalCount});
 }
 
 /// @nodoc
@@ -51,7 +50,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
   @override
   $Res call({
     Object? scrollPosition = freezed,
-    Object? offset = freezed,
     Object? totalCount = freezed,
   }) {
     return _then(_value.copyWith(
@@ -59,10 +57,6 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
           ? _value.scrollPosition
           : scrollPosition // ignore: cast_nullable_to_non_nullable
               as int?,
-      offset: freezed == offset
-          ? _value.offset
-          : offset // ignore: cast_nullable_to_non_nullable
-              as double?,
       totalCount: freezed == totalCount
           ? _value.totalCount
           : totalCount // ignore: cast_nullable_to_non_nullable
@@ -79,7 +73,7 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       __$$ChatStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? scrollPosition, double? offset, int? totalCount});
+  $Res call({int? scrollPosition, int? totalCount});
 }
 
 /// @nodoc
@@ -96,7 +90,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? scrollPosition = freezed,
-    Object? offset = freezed,
     Object? totalCount = freezed,
   }) {
     return _then(_$ChatStateImpl(
@@ -104,10 +97,6 @@ class __$$ChatStateImplCopyWithImpl<$Res>
           ? _value.scrollPosition
           : scrollPosition // ignore: cast_nullable_to_non_nullable
               as int?,
-      offset: freezed == offset
-          ? _value.offset
-          : offset // ignore: cast_nullable_to_non_nullable
-              as double?,
       totalCount: freezed == totalCount
           ? _value.totalCount
           : totalCount // ignore: cast_nullable_to_non_nullable
@@ -119,18 +108,16 @@ class __$$ChatStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ChatStateImpl implements _ChatState {
-  const _$ChatStateImpl({this.scrollPosition, this.offset, this.totalCount});
+  const _$ChatStateImpl({this.scrollPosition, this.totalCount});
 
   @override
   final int? scrollPosition;
-  @override
-  final double? offset;
   @override
   final int? totalCount;
 
   @override
   String toString() {
-    return 'ChatState(scrollPosition: $scrollPosition, offset: $offset, totalCount: $totalCount)';
+    return 'ChatState(scrollPosition: $scrollPosition, totalCount: $totalCount)';
   }
 
   @override
@@ -140,14 +127,12 @@ class _$ChatStateImpl implements _ChatState {
             other is _$ChatStateImpl &&
             (identical(other.scrollPosition, scrollPosition) ||
                 other.scrollPosition == scrollPosition) &&
-            (identical(other.offset, offset) || other.offset == offset) &&
             (identical(other.totalCount, totalCount) ||
                 other.totalCount == totalCount));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, scrollPosition, offset, totalCount);
+  int get hashCode => Object.hash(runtimeType, scrollPosition, totalCount);
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -159,15 +144,11 @@ class _$ChatStateImpl implements _ChatState {
 }
 
 abstract class _ChatState implements ChatState {
-  const factory _ChatState(
-      {final int? scrollPosition,
-      final double? offset,
-      final int? totalCount}) = _$ChatStateImpl;
+  const factory _ChatState({final int? scrollPosition, final int? totalCount}) =
+      _$ChatStateImpl;
 
   @override
   int? get scrollPosition;
-  @override
-  double? get offset;
   @override
   int? get totalCount;
 

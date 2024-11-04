@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:any_chat/core/config.dart';
 import 'package:any_chat/data/chat/pager.dart';
 import 'package:any_chat/data/chat/preferences.dart';
 import 'package:any_chat/data/chat/provider/url.dart';
@@ -8,23 +9,27 @@ import 'package:any_chat/domain/domain.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:paging_view/paging_view.dart';
+import 'package:super_paging/super_paging.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 final class ChatRepositoryImpl extends ChatRepository {
   final Dio client;
-  final ChatPager pager;
+  final ChatPagingSource pagingSource;
   final ChatPreferences preferences;
+  final Pager<int, Message> _pager;
 
   final connectivity = Connectivity();
   WebSocketChannel? socketChannel;
 
   ChatRepositoryImpl({
     required this.client,
-    required this.pager,
+    required this.pagingSource,
     required this.preferences,
-  }) {
+  }) : _pager = Pager(
+    config: const PagingConfig(pageSize: AppConfig.chatPageSize),
+    pagingSourceFactory: () => pagingSource,
+  ) {
     connectivity
       .onConnectivityChanged
       .map((types) => types.any((t) =>
@@ -43,6 +48,7 @@ final class ChatRepositoryImpl extends ChatRepository {
           await socketChannel!.ready;
 
           await for (final _ in socketChannel!.stream) {
+            await messageCount; // update local storage
             await pager.refresh();
           }
         } else {
@@ -53,7 +59,7 @@ final class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  DataSource<int, Message> get pagingSource => pager;
+  Pager<int, Message> get pager => _pager;
 
   @override
   Future<Either<Exception, void>> sendMessage(String text) async {
@@ -86,13 +92,6 @@ final class ChatRepositoryImpl extends ChatRepository {
   @override
   Future<void> storeChatPosition(int position) =>
     preferences.storeChatPosition(position);
-
-  @override
-  Future<double?> get chatOffset => preferences.chatOffset;
-
-  @override
-  Future<void> storeChatOffset(double offset) =>
-    preferences.storeChatOffset(offset);
 
   @override
   Future<int?> get currentPage => preferences.currentPage;

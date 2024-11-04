@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final chatRepositoryProvider = Provider((ref) =>
   ChatRepositoryImpl(
     client: ref.watch(dioProvider),
-    pager: ref.watch(chatPagerProvider),
+    pagingSource: ref.watch(chatPagerProvider),
     preferences: ref.watch(chatPreferencesProvider),
   )
 );

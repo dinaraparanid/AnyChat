@@ -6,25 +6,25 @@ import 'package:any_chat/domain/chat/page.dart';
 import 'package:any_chat/utils/date_time.dart';
 import 'package:any_chat/utils/iterable.dart';
 import 'package:dio/dio.dart';
-import 'package:paging_view/paging_view.dart';
+import 'package:super_paging/super_paging.dart';
 import 'package:tuple/tuple.dart';
 
-final class ChatPager extends DataSource<int, Message> {
+final class ChatPagingSource extends PagingSource<int, Message> {
   final Dio _client;
   final ChatPreferences _preferences;
   final Map<String, int> _firstMessagesForDates = {};
 
-  ChatPager({
+  ChatPagingSource({
     required Dio client,
     required ChatPreferences preferences,
   }) : _client = client, _preferences = preferences;
 
   @override
-  Future<LoadResult<int, Message>> load(LoadAction<int> action) async =>
-    switch (action) {
-      Refresh<int>() => await _fetch(null),
-      Prepend<int>(key: final page) => await _fetch(page),
-      Append<int>(key: final page) => await _fetch(page),
+  Future<LoadResult<int, Message>> load(LoadParams<int> params) =>
+    switch (params) {
+      Refresh<int>() => _fetch(null),
+      Prepend<int>(key: final page) => _fetch(page),
+      Append<int>(key: final page) => _fetch(page),
     };
 
   Future<LoadResult<int, Message>> _fetch(int? page) async {
@@ -57,13 +57,13 @@ final class ChatPager extends DataSource<int, Message> {
         return m.copyWith(firstForDate: _firstMessagesForDates[(key)] == m.id);
       }).toList(growable: false);
 
-      return Success(page: PageData(
-        data: messagesWithDates,
-        prependKey: msgPage.previous,
-        appendKey: msgPage.next,
-      ));
+      return LoadResult.page(
+        items: messagesWithDates,
+        prevKey: msgPage.previous,
+        nextKey: msgPage.next,
+      );
     } on Exception catch (e) {
-      return Failure(e: e);
+      return LoadResult.error(e);
     }
   }
 }

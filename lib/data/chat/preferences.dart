@@ -5,7 +5,6 @@ final class ChatPreferences {
   ChatPreferences({required SharedPreferencesAsync prefs}) : _prefs = prefs;
 
   static const _keyChatPosition = 'chat_position';
-  static const _keyChatOffset = 'chat_offset';
   static const _keyChatPage = 'chat_page';
   static const _keyChatTotalPages = 'total_pages';
 
@@ -13,11 +12,6 @@ final class ChatPreferences {
 
   Future<void> storeChatPosition(int position) =>
     _prefs.setInt(_keyChatPosition, position);
-
-  Future<double?> get chatOffset => _prefs.getDouble(_keyChatOffset);
-
-  Future<void> storeChatOffset(double offset) =>
-    _prefs.setDouble(_keyChatOffset, offset);
 
   Future<int?> get currentPage => _prefs.getInt(_keyChatPage);
 
