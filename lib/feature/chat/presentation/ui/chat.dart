@@ -30,9 +30,9 @@ final class Chat extends ConsumerStatefulWidget {
 }
 
 final class _ChatState extends ConsumerState<Chat> {
-  void Function()? scrollListener;
-  bool isPreparedForInitialScroll = false;
-  bool isInitialScrollDone = false;
+  var isPreparedForInitialScroll = false;
+  var isInitialScrollDone = false;
+  var currentPageOffsetAfterPrepend = 0;
 
   Pager<int, Message> get pager => widget.pager;
   AutoScrollController get scrollController => widget.scrollController;
@@ -40,33 +40,55 @@ final class _ChatState extends ConsumerState<Chat> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => initListeners());
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      scrollController.addListener(scrollListener = () {
-        final position = scrollController.positionIndex;
-        final page = position?.let(getChatPageByPosition) ?? AppConfig.chatFirstPage;
-        final notifier = ref.read(chatNotifierProvider.notifier);
-        position?.let(notifier.updateChatPosition);
-        notifier.updateChatPage(page);
-      });
-    });
+  @override
+  void didUpdateWidget(covariant Chat oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    removeListeners();
+    WidgetsBinding.instance.addPostFrameCallback((_) => initListeners());
   }
 
   @override
   void dispose() {
     super.dispose();
-    scrollListener?.let(scrollController.removeListener);
-    scrollListener = null;
+    removeListeners();
+  }
+
+  void initListeners() {
+    scrollController.addListener(scrollListener);
+    pager.addListener(pagerListener);
+  }
+
+  void removeListeners() {
+    scrollController.removeListener(scrollListener);
+    pager.removeListener(pagerListener);
+  }
+
+  void scrollListener() {
+    final position = scrollController.positionIndex;
+    final page = position?.let(getChatPageByPosition) ?? AppConfig.chatFirstPage;
+    final notifier = ref.read(chatNotifierProvider.notifier);
+    position?.let(notifier.updateChatPosition);
+    //notifier.updateChatPage(page); TODO: придумать алгоритм вычисления страницы
+  }
+
+  void pagerListener() {
+    if (pager.refreshLoadState is Loading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+        restorePosition(isAfterRefresh: true),
+      );
+    } else if (pager.prependLoadState is Loading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) =>
+        restorePosition(isAfterRefresh: false),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
-
-    // TODO: Смысл бага
-    // refresh() очищает весь пейджер,
-    // далее вызывается prepend, который добавляет элементы в начало,
-    // что заставляет позицию меняться (насильно скроллиться)
 
     return Container(
       color: theme.colors.background.primary,
@@ -82,7 +104,7 @@ final class _ChatState extends ConsumerState<Chat> {
             itemBuilder: (context, index) {
               final message = pager.items.elementAt(index);
               return AutoScrollTag(
-                key: ValueKey(message.id),
+                key: ValueKey(index),
                 controller: scrollController,
                 index: index,
                 child: switch (message.firstForDate) {
@@ -116,5 +138,21 @@ final class _ChatState extends ConsumerState<Chat> {
         ],
       ),
     );
+  }
+
+  void restorePosition({required bool isAfterRefresh}) {
+    if (!isAfterRefresh && currentPageOffsetAfterPrepend == 0) return;
+    final scrollPosition = ref.read(chatNotifierProvider).scrollPosition;
+
+    if (scrollPosition != null) {
+      final pageOffset = ++currentPageOffsetAfterPrepend * AppConfig.chatPageSize;
+      final itemOffset = scrollPosition % AppConfig.chatPageSize;
+      final relativeItemPosition = pageOffset + itemOffset;
+
+      scrollController.scrollToIndex(
+        relativeItemPosition,
+        duration: const Duration(milliseconds: 1),
+      ).then((_) => --currentPageOffsetAfterPrepend);
+    }
   }
 }

@@ -27,7 +27,10 @@ final class ChatRepositoryImpl extends ChatRepository {
     required this.pagingSource,
     required this.preferences,
   }) : _pager = Pager(
-    config: const PagingConfig(pageSize: AppConfig.chatPageSize),
+    config: const PagingConfig(
+      pageSize: AppConfig.chatPageSize,
+      prefetchIndex: AppConfig.chatPageSize ~/ 2, // TODO: доработать библиотеку, чтобы prepend на <=
+    ),
     pagingSourceFactory: () => pagingSource,
   ) {
     connectivity

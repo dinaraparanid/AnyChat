@@ -28,7 +28,6 @@ final class _ChatState extends ConsumerState<ChatScreen> {
 
     return Scaffold(
       backgroundColor: theme.colors.background.primary,
-      resizeToAvoidBottomInset: true,
       appBar: ChatBar(context),
       body: Container(
         color: theme.colors.background.textField,
@@ -45,15 +44,7 @@ final class _ChatState extends ConsumerState<ChatScreen> {
                 controller: messageController,
                 onSendClick: () => notifier.sendMessage(
                   message: messageController.text,
-                  onSuccess: () {
-                    // scrollController.animateTo(
-                    //   scrollController.position.maxScrollExtent,
-                    //   duration: const Duration(milliseconds: 300),
-                    //   curve: Curves.linearToEaseOut,
-                    // );
-
-                    messageController.clear();
-                  },
+                  onSuccess: messageController.clear,
                 ),
               ),
             ],

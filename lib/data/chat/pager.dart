@@ -21,11 +21,7 @@ final class ChatPagingSource extends PagingSource<int, Message> {
 
   @override
   Future<LoadResult<int, Message>> load(LoadParams<int> params) =>
-    switch (params) {
-      Refresh<int>() => _fetch(null),
-      Prepend<int>(key: final page) => _fetch(page),
-      Append<int>(key: final page) => _fetch(page),
-    };
+    _fetch(params.key);
 
   Future<LoadResult<int, Message>> _fetch(int? page) async {
     final queryPage = page
