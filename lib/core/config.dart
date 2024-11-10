@@ -2,5 +2,5 @@ final class AppConfig {
   AppConfig._();
 
   static const chatPageSize = 20;
-  static const chatFirstPage = 1;
+  static const chatFirstPage = 0;
 }

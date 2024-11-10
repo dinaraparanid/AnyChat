@@ -16,8 +16,9 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$ChatState {
-  int? get scrollPosition => throw _privateConstructorUsedError;
-  int? get totalCount => throw _privateConstructorUsedError;
+  IMap<int, PageData> get pages => throw _privateConstructorUsedError;
+  int? get currentPage => throw _privateConstructorUsedError;
+  Exception? get currentError => throw _privateConstructorUsedError;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -31,7 +32,8 @@ abstract class $ChatStateCopyWith<$Res> {
   factory $ChatStateCopyWith(ChatState value, $Res Function(ChatState) then) =
       _$ChatStateCopyWithImpl<$Res, ChatState>;
   @useResult
-  $Res call({int? scrollPosition, int? totalCount});
+  $Res call(
+      {IMap<int, PageData> pages, int? currentPage, Exception? currentError});
 }
 
 /// @nodoc
@@ -49,18 +51,23 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? scrollPosition = freezed,
-    Object? totalCount = freezed,
+    Object? pages = null,
+    Object? currentPage = freezed,
+    Object? currentError = freezed,
   }) {
     return _then(_value.copyWith(
-      scrollPosition: freezed == scrollPosition
-          ? _value.scrollPosition
-          : scrollPosition // ignore: cast_nullable_to_non_nullable
+      pages: null == pages
+          ? _value.pages
+          : pages // ignore: cast_nullable_to_non_nullable
+              as IMap<int, PageData>,
+      currentPage: freezed == currentPage
+          ? _value.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
               as int?,
-      totalCount: freezed == totalCount
-          ? _value.totalCount
-          : totalCount // ignore: cast_nullable_to_non_nullable
-              as int?,
+      currentError: freezed == currentError
+          ? _value.currentError
+          : currentError // ignore: cast_nullable_to_non_nullable
+              as Exception?,
     ) as $Val);
   }
 }
@@ -73,7 +80,8 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       __$$ChatStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? scrollPosition, int? totalCount});
+  $Res call(
+      {IMap<int, PageData> pages, int? currentPage, Exception? currentError});
 }
 
 /// @nodoc
@@ -89,18 +97,23 @@ class __$$ChatStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? scrollPosition = freezed,
-    Object? totalCount = freezed,
+    Object? pages = null,
+    Object? currentPage = freezed,
+    Object? currentError = freezed,
   }) {
     return _then(_$ChatStateImpl(
-      scrollPosition: freezed == scrollPosition
-          ? _value.scrollPosition
-          : scrollPosition // ignore: cast_nullable_to_non_nullable
+      pages: null == pages
+          ? _value.pages
+          : pages // ignore: cast_nullable_to_non_nullable
+              as IMap<int, PageData>,
+      currentPage: freezed == currentPage
+          ? _value.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
               as int?,
-      totalCount: freezed == totalCount
-          ? _value.totalCount
-          : totalCount // ignore: cast_nullable_to_non_nullable
-              as int?,
+      currentError: freezed == currentError
+          ? _value.currentError
+          : currentError // ignore: cast_nullable_to_non_nullable
+              as Exception?,
     ));
   }
 }
@@ -108,16 +121,19 @@ class __$$ChatStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ChatStateImpl implements _ChatState {
-  const _$ChatStateImpl({this.scrollPosition, this.totalCount});
+  const _$ChatStateImpl(
+      {required this.pages, this.currentPage, this.currentError});
 
   @override
-  final int? scrollPosition;
+  final IMap<int, PageData> pages;
   @override
-  final int? totalCount;
+  final int? currentPage;
+  @override
+  final Exception? currentError;
 
   @override
   String toString() {
-    return 'ChatState(scrollPosition: $scrollPosition, totalCount: $totalCount)';
+    return 'ChatState(pages: $pages, currentPage: $currentPage, currentError: $currentError)';
   }
 
   @override
@@ -125,14 +141,16 @@ class _$ChatStateImpl implements _ChatState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ChatStateImpl &&
-            (identical(other.scrollPosition, scrollPosition) ||
-                other.scrollPosition == scrollPosition) &&
-            (identical(other.totalCount, totalCount) ||
-                other.totalCount == totalCount));
+            (identical(other.pages, pages) || other.pages == pages) &&
+            (identical(other.currentPage, currentPage) ||
+                other.currentPage == currentPage) &&
+            (identical(other.currentError, currentError) ||
+                other.currentError == currentError));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, scrollPosition, totalCount);
+  int get hashCode =>
+      Object.hash(runtimeType, pages, currentPage, currentError);
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -144,13 +162,17 @@ class _$ChatStateImpl implements _ChatState {
 }
 
 abstract class _ChatState implements ChatState {
-  const factory _ChatState({final int? scrollPosition, final int? totalCount}) =
-      _$ChatStateImpl;
+  const factory _ChatState(
+      {required final IMap<int, PageData> pages,
+      final int? currentPage,
+      final Exception? currentError}) = _$ChatStateImpl;
 
   @override
-  int? get scrollPosition;
+  IMap<int, PageData> get pages;
   @override
-  int? get totalCount;
+  int? get currentPage;
+  @override
+  Exception? get currentError;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.

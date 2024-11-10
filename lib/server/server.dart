@@ -5,7 +5,7 @@ import 'package:any_chat/server/di/server_module.dart';
 import 'package:any_chat/server/domain/chat/repository.dart';
 import 'package:any_chat/server/rooting/router.dart';
 import 'package:any_chat/server/rooting/signal.dart';
-import 'package:any_chat/utils/page.dart';
+import 'package:any_chat/utils/paging/page.dart';
 import 'package:logger/logger.dart';
 
 final _host = InternetAddress.loopbackIPv4;

@@ -1,29 +1,29 @@
+import 'package:any_chat/core/config.dart';
+import 'package:any_chat/domain/chat/pager.dart';
 import 'package:any_chat/domain/domain.dart';
+import 'package:any_chat/feature/chat/component/page_data.dart';
 import 'package:any_chat/feature/chat/component/state.dart';
+import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:super_paging/super_paging.dart';
 
 export 'state.dart';
 
 final class ChatNotifier extends StateNotifier<ChatState> {
   final ChatRepository _repository;
-  final Pager<int, Message> pager;
 
   ChatNotifier(ChatRepository repository) :
     _repository = repository,
-    pager = repository.pager,
-    super(const ChatState()) {
+    super(ChatState.initial()) {
     _init();
   }
 
   Future<void> _init() async {
-    final position = await _repository.chatPosition;
-    final countResponse = await _repository.messageCount;
+    final currentPage = (await _repository.currentPage)
+      ?? (await _repository.messageCount)
+        .map((x) => x.lastPage)
+        .getOrElse((_) => AppConfig.chatFirstPage);
 
-    state = state.copyWith(
-      scrollPosition: position ?? ChatState.undefinedPosition,
-      totalCount: countResponse.map((r) => r.count).getOrElse((_) => 0),
-    );
+    await updateChatPage(currentPage);
   }
 
   Future<void> sendMessage({
@@ -35,12 +35,61 @@ final class ChatNotifier extends StateNotifier<ChatState> {
     (_) { onSuccess(); },
   );
 
-  Future<void> refresh() => pager.refresh();
+  Future<void> refresh() => _loadChatPage();
 
-  Future<void> updateChatPosition(int position) async {
-    await _repository.storeChatPosition(position);
-    state = state.copyWith(scrollPosition: position);
+  Future<void> updateChatPage(int page) async {
+    final hasPage = state.pages.containsKey(page)
+      ? true : await _loadChatPage(page);
+
+    if (!hasPage) return;
+
+    _repository.storeCurrentPage(page);
+
+    final data = state.pages[page]!;
+    final prev = data.previousPage;
+    final next = data.nextPage;
+
+    if (prev != null && state.mustLoadPage(prev)) {
+      await _loadChatPage(prev);
+    }
+
+    if (next != null && state.mustLoadPage(next)) {
+      await _loadChatPage(next);
+    }
+
+    state = state.copyWith(currentPage: page);
   }
 
-  Future<void> updateChatPage(int page) => _repository.storeCurrentPage(page);
+  Future<void> loadNextPage() => _loadChatPage(state.nextPage);
+  Future<void> loadPreviousPage() => _loadChatPage(state.previousPage);
+
+  Future<bool> _loadChatPage([int? page]) async {
+    switch (await _repository.pager.load(key: page)) {
+      case Success<int, Message>(
+        key: final page,
+        prependKey: final prev,
+        appendKey: final next,
+        items: final items,
+      ):
+        final pageData = PageData(
+          messages: IList(items),
+          previousPage: prev,
+          nextPage: next,
+        );
+
+        state = state.copyWith(
+          pages: state.pages.update(
+            page,
+            (_) => pageData,
+            ifAbsent: () => pageData,
+          ),
+          currentError: null,
+        );
+        return true;
+
+      case Failure<int, Message>(error: final e):
+        state = state.copyWith(currentError: e);
+        return false;
+    }
+  }
 }

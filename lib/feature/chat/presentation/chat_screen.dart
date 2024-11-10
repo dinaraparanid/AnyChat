@@ -1,11 +1,12 @@
+import 'package:any_chat/core/ui/foundation/progress_indicator.dart';
 import 'package:any_chat/core/ui/theme/theme.dart';
+import 'package:any_chat/feature/chat/component/notifier.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/chat.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:scroll_to_index/scroll_to_index.dart';
 
 const _burgerButtonSize = 24.0;
 
@@ -18,13 +19,20 @@ final class ChatScreen extends ConsumerStatefulWidget {
 
 final class _ChatState extends ConsumerState<ChatScreen> {
   final messageController = TextEditingController();
-  final scrollController = AutoScrollController();
+  PageController? pagingController;
+
+  ChatNotifier get notifier => ref.read(chatNotifierProvider.notifier);
+
+  @override
+  void dispose() {
+    super.dispose();
+    pagingController?.dispose();
+    pagingController = null;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final notifier = ref.read(chatNotifierProvider.notifier);
     final theme = ref.watch(appThemeProvider);
-    final pager = notifier.pager;
 
     return Scaffold(
       backgroundColor: theme.colors.background.primary,
@@ -34,12 +42,7 @@ final class _ChatState extends ConsumerState<ChatScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              Expanded(
-                child: Chat(
-                  pager: pager,
-                  scrollController: scrollController,
-                )
-              ),
+              Expanded(child: Content()),
               MessageTextField(
                 controller: messageController,
                 onSendClick: () => notifier.sendMessage(
@@ -52,6 +55,18 @@ final class _ChatState extends ConsumerState<ChatScreen> {
         ),
       ),
     );
+  }
+
+  Widget Content() {
+    final state = ref.watch(chatNotifierProvider);
+    final currentPage = state.currentPage;
+
+    if (pagingController == null && currentPage == null) {
+      return const AppProgressIndicator();
+    }
+
+    pagingController ??= PageController(initialPage: currentPage!);
+    return Chat(pagingController: pagingController!);
   }
 
   AppBar ChatBar(BuildContext context) {

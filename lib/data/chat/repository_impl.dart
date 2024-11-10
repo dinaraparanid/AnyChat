@@ -1,15 +1,13 @@
 import 'dart:async';
 
-import 'package:any_chat/core/config.dart';
-import 'package:any_chat/data/chat/pager.dart';
 import 'package:any_chat/data/chat/preferences.dart';
 import 'package:any_chat/data/chat/provider/url.dart';
 import 'package:any_chat/domain/chat/count.dart';
+import 'package:any_chat/domain/chat/pager.dart';
 import 'package:any_chat/domain/domain.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:super_paging/super_paging.dart';
 import 'package:web_socket_channel/status.dart' as status;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -17,7 +15,6 @@ final class ChatRepositoryImpl extends ChatRepository {
   final Dio client;
   final ChatPagingSource pagingSource;
   final ChatPreferences preferences;
-  final Pager<int, Message> _pager;
 
   final connectivity = Connectivity();
   WebSocketChannel? socketChannel;
@@ -26,13 +23,7 @@ final class ChatRepositoryImpl extends ChatRepository {
     required this.client,
     required this.pagingSource,
     required this.preferences,
-  }) : _pager = Pager(
-    config: const PagingConfig(
-      pageSize: AppConfig.chatPageSize,
-      prefetchIndex: AppConfig.chatPageSize ~/ 2, // TODO: доработать библиотеку, чтобы prepend на <=
-    ),
-    pagingSourceFactory: () => pagingSource,
-  ) {
+  }) {
     connectivity
       .onConnectivityChanged
       .map((types) => types.any((t) =>
@@ -52,7 +43,7 @@ final class ChatRepositoryImpl extends ChatRepository {
 
           await for (final _ in socketChannel!.stream) {
             await messageCount; // update local storage
-            await pager.refresh();
+            await pager.load();
           }
         } else {
           socketChannel?.sink.close(status.goingAway);
@@ -62,7 +53,7 @@ final class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Pager<int, Message> get pager => _pager;
+  ChatPagingSource get pager => pagingSource;
 
   @override
   Future<Either<Exception, void>> sendMessage(String text) async {
@@ -88,13 +79,6 @@ final class ChatRepositoryImpl extends ChatRepository {
       return Either.left(e);
     }
   }
-
-  @override
-  Future<int?> get chatPosition => preferences.chatPosition;
-
-  @override
-  Future<void> storeChatPosition(int position) =>
-    preferences.storeChatPosition(position);
 
   @override
   Future<int?> get currentPage => preferences.currentPage;

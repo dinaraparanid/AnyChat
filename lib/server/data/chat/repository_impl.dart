@@ -1,3 +1,4 @@
+import 'package:any_chat/core/config.dart';
 import 'package:any_chat/domain/chat/message.dart';
 import 'package:any_chat/domain/chat/page.dart';
 import 'package:any_chat/server/data/sqflite/chat.dart';
@@ -23,7 +24,7 @@ final class ChatRepositoryImpl extends ChatRepository {
       page: page,
       perPage: perPage,
       messages: await messagesTask,
-      previous: page > 1 ? page - 1 : null,
+      previous: page > AppConfig.chatFirstPage ? page - 1 : null,
       next: await hasNextTask ? page + 1 : null,
     );
   });
