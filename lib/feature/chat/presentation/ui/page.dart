@@ -6,6 +6,7 @@ import 'package:any_chat/utils/date_time.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nested_scroll_views/material.dart';
 
 final class ChatPage extends ConsumerWidget {
   final IList<Message> messages;
@@ -16,7 +17,9 @@ final class ChatPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(appThemeProvider);
 
-    return ListView.separated(
+    return NestedListView.separated(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
       itemCount: messages.length,
       itemBuilder: (ctx, msgIdx) {
         final message = messages[msgIdx];

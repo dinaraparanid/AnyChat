@@ -2,8 +2,10 @@ import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/page.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nested_scroll_views/material.dart';
 
 final class Chat extends ConsumerStatefulWidget {
   final PageController pagingController;
@@ -35,11 +37,11 @@ final class _ChatState extends ConsumerState<Chat> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          // TODO: nested scroll
-          PageView.builder(
+          NestedPageView.builder(
             controller: pagingController,
             itemCount: state.pages.length,
             scrollDirection: Axis.vertical,
+            physics: const ClampingScrollPhysics(),
             itemBuilder: (ctx, idx) {
               // TODO: метчить состояния + добавить UiState
               final chunk = state.pages[idx]?.messages ?? IList();

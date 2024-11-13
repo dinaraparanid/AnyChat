@@ -506,6 +506,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
+  nested_scroll_views:
+    dependency: "direct main"
+    description:
+      name: nested_scroll_views
+      sha256: "37d0f35682441a4cdf5f50bd5767a53b7192780a085c9dc728fc273df8a3443a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.12"
   nm:
     dependency: transitive
     description:
