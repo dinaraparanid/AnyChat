@@ -71,7 +71,7 @@ final class _ChatState extends ConsumerState<Chat> {
     final page = position?.let(getChatPageByPosition) ?? AppConfig.chatFirstPage;
     final notifier = ref.read(chatNotifierProvider.notifier);
     position?.let(notifier.updateChatPosition);
-    //notifier.updateChatPage(page); TODO: придумать алгоритм вычисления страницы
+    notifier.updateChatPage(page); // TODO: придумать алгоритм вычисления страницы
   }
 
   void pagerListener() {
@@ -95,12 +95,8 @@ final class _ChatState extends ConsumerState<Chat> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          PagingListView.separated(
+          BidirectionalPagingListView.separated(
             pager: pager,
-            findChildIndexCallback: (key) {
-              final messageId = (key as ValueKey<int>).value;
-              return pager.items.positionWhere((msg) => msg.id == messageId);
-            },
             itemBuilder: (context, index) {
               final message = pager.items.elementAt(index);
               return AutoScrollTag(
@@ -133,7 +129,7 @@ final class _ChatState extends ConsumerState<Chat> {
               bottom: theme.dimensions.padding.small,
             ),
             separatorBuilder: (ctx, idx) =>
-                SizedBox(height: theme.dimensions.padding.extraMedium),
+              SizedBox(height: theme.dimensions.padding.extraMedium),
           ),
         ],
       ),
@@ -141,18 +137,18 @@ final class _ChatState extends ConsumerState<Chat> {
   }
 
   void restorePosition({required bool isAfterRefresh}) {
-    if (!isAfterRefresh && currentPageOffsetAfterPrepend == 0) return;
-    final scrollPosition = ref.read(chatNotifierProvider).scrollPosition;
-
-    if (scrollPosition != null) {
-      final pageOffset = ++currentPageOffsetAfterPrepend * AppConfig.chatPageSize;
-      final itemOffset = scrollPosition % AppConfig.chatPageSize;
-      final relativeItemPosition = pageOffset + itemOffset;
-
-      scrollController.scrollToIndex(
-        relativeItemPosition,
-        duration: const Duration(milliseconds: 1),
-      ).then((_) => --currentPageOffsetAfterPrepend);
-    }
+    // if (!isAfterRefresh && currentPageOffsetAfterPrepend == 0) return;
+    // final scrollPosition = ref.read(chatNotifierProvider).scrollPosition;
+    //
+    // if (scrollPosition != null) {
+    //   final pageOffset = ++currentPageOffsetAfterPrepend * AppConfig.chatPageSize;
+    //   final itemOffset = scrollPosition % AppConfig.chatPageSize;
+    //   final relativeItemPosition = pageOffset + itemOffset;
+    //
+    //   scrollController.scrollToIndex(
+    //     relativeItemPosition,
+    //     duration: const Duration(milliseconds: 1),
+    //   ).then((_) => --currentPageOffsetAfterPrepend);
+    // }
   }
 }
