@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/utils/string.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,7 +56,34 @@ final class _MessageTextFieldState extends ConsumerState<MessageTextField> {
     );
   }
 
-  Widget InputTextField(BuildContext context) {
+  Widget InputTextField(BuildContext context) =>
+    Platform.isIOS || Platform.isMacOS
+      ? InputTextFieldCupertino(context)
+      : InputTextFieldMaterial(context);
+
+  Widget InputTextFieldCupertino(BuildContext context) {
+    final theme = ref.watch(appThemeProvider);
+
+    return CupertinoTextField(
+      controller: widget.controller,
+      placeholder: AppLocalizations.of(context)!.chat_message_hint,
+      placeholderStyle: theme.typography.body.copyWith(
+        color: theme.colors.text.onTextField.withOpacity(0.5),
+      ),
+      decoration: const BoxDecoration(
+        color: Colors.transparent,
+      ),
+      style: theme.typography.body.copyWith(
+        color: theme.colors.text.onTextField,
+      ),
+      cursorColor: theme.colors.text.onTextField,
+      minLines: 1,
+      maxLines: _maxLines,
+      onChanged: (_) => setState(() {}),
+    );
+  }
+
+  Widget InputTextFieldMaterial(BuildContext context) {
     final theme = ref.watch(appThemeProvider);
 
     return TextField(

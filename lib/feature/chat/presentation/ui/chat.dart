@@ -7,7 +7,6 @@ import 'package:any_chat/feature/chat/presentation/ui/date.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message.dart';
 import 'package:any_chat/utils/date_time.dart';
 import 'package:any_chat/utils/functional.dart';
-import 'package:any_chat/utils/iterable.dart';
 import 'package:any_chat/utils/page.dart';
 import 'package:any_chat/utils/scroll.dart';
 import 'package:flutter/material.dart';
