@@ -2,10 +2,8 @@ import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/page.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nested_scroll_views/material.dart';
 
 final class Chat extends ConsumerStatefulWidget {
   final PageController pagingController;
@@ -24,6 +22,8 @@ final class _ChatState extends ConsumerState<Chat> {
   var isInitialScrollDone = false;
   var currentPageOffsetAfterPrepend = 0;
 
+  final scrollMap = <int, ScrollController>{};
+
   PageController get pagingController => widget.pagingController;
 
   @override
@@ -37,15 +37,28 @@ final class _ChatState extends ConsumerState<Chat> {
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          NestedPageView.builder(
+          PageView.builder(
             controller: pagingController,
             itemCount: state.pages.length,
             scrollDirection: Axis.vertical,
-            physics: const ClampingScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (ctx, idx) {
               // TODO: метчить состояния + добавить UiState
               final chunk = state.pages[idx]?.messages ?? IList();
-              return ChatPage(messages: chunk);
+              final controller = scrollMap.putIfAbsent(idx, () => ScrollController());
+
+              return ChatPage(
+                messages: chunk,
+                controller: controller,
+                scrollToPrevious: () => pagingController.previousPage(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linear,
+                ),
+                scrollToNext: () => pagingController.nextPage(
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.linear,
+                ),
+              );
             },
             onPageChanged: notifier.updateChatPage,
           ),
