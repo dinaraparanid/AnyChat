@@ -8,7 +8,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 const _maxLines = 6;
-const _sendIconSize = 32.0;
 
 final class MessageTextField extends ConsumerStatefulWidget {
   final TextEditingController controller;
@@ -122,8 +121,8 @@ final class _MessageTextFieldState extends ConsumerState<MessageTextField> {
     return IconButton(
       icon: Image(
         image: AssetImage(AppImages.load('ic_send.png')),
-        width: _sendIconSize,
-        height: _sendIconSize,
+        width: theme.dimensions.imageSize.extraBig,
+        height: theme.dimensions.imageSize.extraBig,
         color: color,
       ),
       color: color,

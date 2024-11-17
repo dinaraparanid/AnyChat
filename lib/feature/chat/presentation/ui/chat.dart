@@ -2,6 +2,7 @@ import 'package:any_chat/core/config.dart';
 import 'package:any_chat/core/ui/foundation/progress_indicator.dart';
 import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/domain/domain.dart';
+import 'package:any_chat/feature/chat/component/notifier.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
 import 'package:any_chat/feature/chat/presentation/ui/date.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message.dart';
@@ -15,12 +16,10 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:super_paging/super_paging.dart';
 
 final class Chat extends ConsumerStatefulWidget {
-  final Pager<int, Message> pager;
   final AutoScrollController scrollController;
 
   const Chat({
     super.key,
-    required this.pager,
     required this.scrollController,
   });
 
@@ -33,8 +32,9 @@ final class _ChatState extends ConsumerState<Chat> {
   var isInitialScrollDone = false;
   var currentPageOffsetAfterPrepend = 0;
 
-  Pager<int, Message> get pager => widget.pager;
   AutoScrollController get scrollController => widget.scrollController;
+  ChatNotifier get notifier => ref.read(chatNotifierProvider.notifier);
+  Pager<int, Message> get pager => notifier.pager;
 
   @override
   void initState() {
@@ -57,12 +57,10 @@ final class _ChatState extends ConsumerState<Chat> {
 
   void initListeners() {
     scrollController.addListener(scrollListener);
-    pager.addListener(pagerListener);
   }
 
   void removeListeners() {
     scrollController.removeListener(scrollListener);
-    pager.removeListener(pagerListener);
   }
 
   void scrollListener() {
@@ -71,18 +69,6 @@ final class _ChatState extends ConsumerState<Chat> {
     final notifier = ref.read(chatNotifierProvider.notifier);
     position?.let(notifier.updateChatPosition);
     notifier.updateChatPage(page); // TODO: придумать алгоритм вычисления страницы
-  }
-
-  void pagerListener() {
-    if (pager.refreshLoadState is Loading) {
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-        restorePosition(isAfterRefresh: true),
-      );
-    } else if (pager.prependLoadState is Loading) {
-      WidgetsBinding.instance.addPostFrameCallback((_) =>
-        restorePosition(isAfterRefresh: false),
-      );
-    }
   }
 
   @override
@@ -98,11 +84,12 @@ final class _ChatState extends ConsumerState<Chat> {
             pager: pager,
             itemBuilder: (context, index) {
               final message = pager.items.elementAt(index);
+
               return AutoScrollTag(
                 key: ValueKey(index),
                 controller: scrollController,
                 index: index,
-                child: switch (message.firstForDate) {
+                child: switch (notifier.isFirstMessageForDate(index)) {
                   true => Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,21 +120,5 @@ final class _ChatState extends ConsumerState<Chat> {
         ],
       ),
     );
-  }
-
-  void restorePosition({required bool isAfterRefresh}) {
-    // if (!isAfterRefresh && currentPageOffsetAfterPrepend == 0) return;
-    // final scrollPosition = ref.read(chatNotifierProvider).scrollPosition;
-    //
-    // if (scrollPosition != null) {
-    //   final pageOffset = ++currentPageOffsetAfterPrepend * AppConfig.chatPageSize;
-    //   final itemOffset = scrollPosition % AppConfig.chatPageSize;
-    //   final relativeItemPosition = pageOffset + itemOffset;
-    //
-    //   scrollController.scrollToIndex(
-    //     relativeItemPosition,
-    //     duration: const Duration(milliseconds: 1),
-    //   ).then((_) => --currentPageOffsetAfterPrepend);
-    // }
   }
 }

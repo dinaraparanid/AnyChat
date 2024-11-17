@@ -26,8 +26,6 @@ mixin _$Message {
   String get text => throw _privateConstructorUsedError;
   @JsonKey(name: 'timestamp')
   int get timestamp => throw _privateConstructorUsedError;
-  @JsonKey(name: 'first_for_date')
-  bool? get firstForDate => throw _privateConstructorUsedError;
 
   /// Serializes this Message to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,8 +44,7 @@ abstract class $MessageCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'id') int id,
       @JsonKey(name: 'text') String text,
-      @JsonKey(name: 'timestamp') int timestamp,
-      @JsonKey(name: 'first_for_date') bool? firstForDate});
+      @JsonKey(name: 'timestamp') int timestamp});
 }
 
 /// @nodoc
@@ -68,7 +65,6 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
     Object? id = null,
     Object? text = null,
     Object? timestamp = null,
-    Object? firstForDate = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -83,10 +79,6 @@ class _$MessageCopyWithImpl<$Res, $Val extends Message>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as int,
-      firstForDate: freezed == firstForDate
-          ? _value.firstForDate
-          : firstForDate // ignore: cast_nullable_to_non_nullable
-              as bool?,
     ) as $Val);
   }
 }
@@ -101,8 +93,7 @@ abstract class _$$MessageImplCopyWith<$Res> implements $MessageCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'id') int id,
       @JsonKey(name: 'text') String text,
-      @JsonKey(name: 'timestamp') int timestamp,
-      @JsonKey(name: 'first_for_date') bool? firstForDate});
+      @JsonKey(name: 'timestamp') int timestamp});
 }
 
 /// @nodoc
@@ -121,7 +112,6 @@ class __$$MessageImplCopyWithImpl<$Res>
     Object? id = null,
     Object? text = null,
     Object? timestamp = null,
-    Object? firstForDate = freezed,
   }) {
     return _then(_$MessageImpl(
       id: null == id
@@ -136,10 +126,6 @@ class __$$MessageImplCopyWithImpl<$Res>
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
               as int,
-      firstForDate: freezed == firstForDate
-          ? _value.firstForDate
-          : firstForDate // ignore: cast_nullable_to_non_nullable
-              as bool?,
     ));
   }
 }
@@ -150,8 +136,7 @@ class _$MessageImpl implements _Message {
   const _$MessageImpl(
       {@JsonKey(name: 'id') required this.id,
       @JsonKey(name: 'text') required this.text,
-      @JsonKey(name: 'timestamp') required this.timestamp,
-      @JsonKey(name: 'first_for_date') this.firstForDate});
+      @JsonKey(name: 'timestamp') required this.timestamp});
 
   factory _$MessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageImplFromJson(json);
@@ -165,13 +150,10 @@ class _$MessageImpl implements _Message {
   @override
   @JsonKey(name: 'timestamp')
   final int timestamp;
-  @override
-  @JsonKey(name: 'first_for_date')
-  final bool? firstForDate;
 
   @override
   String toString() {
-    return 'Message(id: $id, text: $text, timestamp: $timestamp, firstForDate: $firstForDate)';
+    return 'Message(id: $id, text: $text, timestamp: $timestamp)';
   }
 
   @override
@@ -182,15 +164,12 @@ class _$MessageImpl implements _Message {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.text, text) || other.text == text) &&
             (identical(other.timestamp, timestamp) ||
-                other.timestamp == timestamp) &&
-            (identical(other.firstForDate, firstForDate) ||
-                other.firstForDate == firstForDate));
+                other.timestamp == timestamp));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, text, timestamp, firstForDate);
+  int get hashCode => Object.hash(runtimeType, id, text, timestamp);
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.
@@ -212,8 +191,7 @@ abstract class _Message implements Message {
   const factory _Message(
           {@JsonKey(name: 'id') required final int id,
           @JsonKey(name: 'text') required final String text,
-          @JsonKey(name: 'timestamp') required final int timestamp,
-          @JsonKey(name: 'first_for_date') final bool? firstForDate}) =
+          @JsonKey(name: 'timestamp') required final int timestamp}) =
       _$MessageImpl;
 
   factory _Message.fromJson(Map<String, dynamic> json) = _$MessageImpl.fromJson;
@@ -227,9 +205,6 @@ abstract class _Message implements Message {
   @override
   @JsonKey(name: 'timestamp')
   int get timestamp;
-  @override
-  @JsonKey(name: 'first_for_date')
-  bool? get firstForDate;
 
   /// Create a copy of Message
   /// with the given fields replaced by the non-null parameter values.

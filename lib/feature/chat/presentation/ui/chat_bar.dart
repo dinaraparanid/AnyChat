@@ -5,8 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-const _burgerButtonSize = 24.0;
-
 PreferredSizeWidget ChatBar({
   required BuildContext context,
   required AppTheme theme,
@@ -51,8 +49,8 @@ PreferredSizeWidget _ChatBarCupertino({
 Widget BurgerButton({required AppTheme theme}) => IconButton(
   icon: Image(
     image: AssetImage(AppImages.load('ic_burger.png')),
-    width: _burgerButtonSize,
-    height: _burgerButtonSize,
+    width: theme.dimensions.imageSize.big,
+    height: theme.dimensions.imageSize.big,
   ),
   color: theme.colors.button.onTopBar,
   onPressed: () {

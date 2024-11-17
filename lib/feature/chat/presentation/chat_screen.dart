@@ -22,7 +22,6 @@ final class _ChatState extends ConsumerState<ChatScreen> {
   Widget build(BuildContext context) {
     final notifier = ref.read(chatNotifierProvider.notifier);
     final theme = ref.watch(appThemeProvider);
-    final pager = notifier.pager;
 
     return Scaffold(
       backgroundColor: theme.colors.background.primary,
@@ -32,12 +31,7 @@ final class _ChatState extends ConsumerState<ChatScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              Expanded(
-                child: Chat(
-                  pager: pager,
-                  scrollController: scrollController,
-                )
-              ),
+              Expanded(child: Chat(scrollController: scrollController)),
               MessageTextField(
                 controller: messageController,
                 onSendClick: () => notifier.sendMessage(
