@@ -1,6 +1,5 @@
 import 'package:any_chat/domain/domain.dart';
 import 'package:any_chat/feature/chat/component/state.dart';
-import 'package:any_chat/utils/iterable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:super_paging/super_paging.dart';
@@ -23,7 +22,7 @@ final class ChatNotifier extends StateNotifier<ChatState> {
     final countResponse = await _repository.messageCount;
 
     state = state.copyWith(
-      scrollPosition: position ?? ChatState.undefinedPosition,
+      currentMessageId: position ?? ChatState.undefinedPosition,
       totalCount: countResponse.map((r) => r.count).getOrElse((_) => 0),
     );
   }
@@ -39,12 +38,10 @@ final class ChatNotifier extends StateNotifier<ChatState> {
 
   Future<void> refresh() => pager.refresh();
 
-  Future<void> updateChatPosition(int position) async {
-    await _repository.storeChatPosition(position);
-    state = state.copyWith(scrollPosition: position);
+  Future<void> updateChatPosition(int messageId) async {
+    await _repository.storeChatPosition(messageId);
+    state = state.copyWith(currentMessageId: messageId);
   }
-
-  Future<void> updateChatPage(int page) => _repository.storeCurrentPage(page);
 
   bool isFirstMessageForDate(int messageIndex) {
     if (messageIndex == 0) return true;

@@ -9,11 +9,11 @@ part of 'count.dart';
 _$MessageCountImpl _$$MessageCountImplFromJson(Map<String, dynamic> json) =>
     _$MessageCountImpl(
       count: (json['count'] as num).toInt(),
-      lastPage: (json['last_page'] as num).toInt(),
+      lastMessageId: (json['last_message_id'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$MessageCountImplToJson(_$MessageCountImpl instance) =>
     <String, dynamic>{
       'count': instance.count,
-      'last_page': instance.lastPage,
+      'last_message_id': instance.lastMessageId,
     };

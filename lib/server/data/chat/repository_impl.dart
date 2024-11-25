@@ -3,6 +3,7 @@ import 'package:any_chat/domain/chat/page.dart';
 import 'package:any_chat/server/data/sqflite/chat.dart';
 import 'package:any_chat/server/data/sqflite/db.dart';
 import 'package:any_chat/server/domain/chat/repository.dart';
+import 'package:any_chat/utils/functional.dart';
 import 'package:sqlite_async/sqlite_async.dart';
 
 final class ChatRepositoryImpl extends ChatRepository {
@@ -13,18 +14,27 @@ final class ChatRepositoryImpl extends ChatRepository {
 
   @override
   Future<MessagePage> getMessagePage({
-    required int page,
     required int perPage,
+    int? lastMessageId,
   }) => _db.writeTransaction((txn) async {
-    final messagesTask = txn.fetchMessagePage(page: page, perPage: perPage);
-    final hasNextTask = txn.hasNext(page: page, perPage: perPage);
+    final messagesTask = lastMessageId?.let((id) => txn.fetchMessagePage(
+      lastMessageId: id,
+      perPage: perPage,
+    ));
+
+    final prevPageTask = lastMessageId?.let((id) =>
+      txn.pageBefore(lastMessageId: id, perPage: perPage)
+    );
+
+    final nextPageTask = lastMessageId?.let((id) =>
+      txn.pageAfter(lastMessageId: id, perPage: perPage)
+    );
 
     return MessagePage(
-      page: page,
       perPage: perPage,
-      messages: await messagesTask,
-      previous: page > 1 ? page - 1 : null,
-      next: await hasNextTask ? page + 1 : null,
+      messages: await messagesTask ?? [],
+      previous: await prevPageTask,
+      next: await nextPageTask,
     );
   });
 
@@ -33,19 +43,17 @@ final class ChatRepositoryImpl extends ChatRepository {
 
   @override
   Future<int> get totalMessageCount => _db.totalMessageCount;
+
+  @override
+  Future<int?> get lastMessageId => _db.lastMessageId;
 }
 
 extension _Messages on SqliteWriteContext {
   Future<List<Message>> fetchMessagePage({
-    required int page,
+    required int lastMessageId,
     required int perPage,
   }) async {
-    final res = await selectMessagePage(page: page, perPage: perPage);
+    final res = await messagePage(lastMessageId: lastMessageId, perPage: perPage);
     return res.map(Message.fromJson).toList(growable: false);
   }
-
-  Future<bool> hasNext({
-    required int page,
-    required int perPage,
-  }) => hasPageAfter(page: page, perPage: perPage);
 }

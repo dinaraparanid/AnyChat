@@ -4,12 +4,12 @@ import 'package:any_chat/domain/chat/count.dart';
 import 'package:any_chat/domain/chat/page.dart';
 import 'package:any_chat/server/rooting/request/messages_count.dart';
 import 'package:any_chat/server/rooting/request/messages_page.dart';
-import 'package:any_chat/server/rooting/request/query.dart';
+import 'package:any_chat/data/chat/query.dart';
 import 'package:logger/logger.dart';
 
 typedef ConnectedRequest = void Function(WebSocket client);
 typedef MessagingRequest = void Function(String message);
-typedef UpdatePagerRequest = Future<MessagePage> Function(int page, int perPage);
+typedef UpdatePagerRequest = Future<MessagePage> Function(int? lastMessageId, int perPage);
 typedef UpdateCounterRequest = Future<MessageCount> Function();
 typedef DisconnectedRequest = void Function(WebSocket client);
 

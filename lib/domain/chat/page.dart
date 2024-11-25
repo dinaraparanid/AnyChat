@@ -7,7 +7,6 @@ part 'page.g.dart';
 @freezed
 abstract class MessagePage with _$MessagePage {
   const factory MessagePage({
-    required int page,
     required int perPage,
     required List<Message> messages,
     int? next,

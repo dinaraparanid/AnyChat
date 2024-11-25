@@ -1,4 +1,3 @@
-import 'package:any_chat/core/config.dart';
 import 'package:any_chat/core/ui/foundation/progress_indicator.dart';
 import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/domain/domain.dart';
@@ -8,7 +7,6 @@ import 'package:any_chat/feature/chat/presentation/ui/date.dart';
 import 'package:any_chat/feature/chat/presentation/ui/message.dart';
 import 'package:any_chat/utils/date_time.dart';
 import 'package:any_chat/utils/functional.dart';
-import 'package:any_chat/utils/page.dart';
 import 'package:any_chat/utils/scroll.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,10 +63,9 @@ final class _ChatState extends ConsumerState<Chat> {
 
   void scrollListener() {
     final position = scrollController.positionIndex;
-    final page = position?.let(getChatPageByPosition) ?? AppConfig.chatFirstPage;
+    final currentMessageId = position?.let(pager.items.elementAt).id;
     final notifier = ref.read(chatNotifierProvider.notifier);
-    position?.let(notifier.updateChatPosition);
-    notifier.updateChatPage(page); // TODO: придумать алгоритм вычисления страницы
+    currentMessageId?.let(notifier.updateChatPosition);
   }
 
   @override

@@ -49,7 +49,7 @@ final class ChatRepositoryImpl extends ChatRepository {
 
           await for (final _ in socketChannel!.stream) {
             await messageCount; // update local storage
-            await pager.refresh();
+            await pager.refresh(resetPages: false);
           }
         } else {
           socketChannel?.sink.close(status.goingAway);
@@ -79,7 +79,6 @@ final class ChatRepositoryImpl extends ChatRepository {
       );
 
       final data = MessageCount.fromJson(response.data);
-      await storeTotalPages(data.lastPage);
       return Either.right(data);
     } on Exception catch (e) {
       return Either.left(e);
@@ -90,18 +89,6 @@ final class ChatRepositoryImpl extends ChatRepository {
   Future<int?> get chatPosition => preferences.chatPosition;
 
   @override
-  Future<void> storeChatPosition(int position) =>
-    preferences.storeChatPosition(position);
-
-  @override
-  Future<int?> get currentPage => preferences.currentPage;
-
-  @override
-  Future<void> storeCurrentPage(int page) => preferences.storeCurrentPage(page);
-
-  @override
-  Future<int?> get totalPages => preferences.totalPages;
-
-  @override
-  Future<void> storeTotalPages(int pages) => preferences.storeTotalPages(pages);
+  Future<void> storeChatPosition(int messageId) =>
+    preferences.storeChatPosition(messageId);
 }

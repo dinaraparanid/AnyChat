@@ -20,10 +20,10 @@ MessageCount _$MessageCountFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MessageCount {
-  @JsonKey(name: "count")
+  @JsonKey(name: 'count')
   int get count => throw _privateConstructorUsedError;
-  @JsonKey(name: "last_page")
-  int get lastPage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_message_id')
+  int? get lastMessageId => throw _privateConstructorUsedError;
 
   /// Serializes this MessageCount to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -42,8 +42,8 @@ abstract class $MessageCountCopyWith<$Res> {
       _$MessageCountCopyWithImpl<$Res, MessageCount>;
   @useResult
   $Res call(
-      {@JsonKey(name: "count") int count,
-      @JsonKey(name: "last_page") int lastPage});
+      {@JsonKey(name: 'count') int count,
+      @JsonKey(name: 'last_message_id') int? lastMessageId});
 }
 
 /// @nodoc
@@ -62,17 +62,17 @@ class _$MessageCountCopyWithImpl<$Res, $Val extends MessageCount>
   @override
   $Res call({
     Object? count = null,
-    Object? lastPage = null,
+    Object? lastMessageId = freezed,
   }) {
     return _then(_value.copyWith(
       count: null == count
           ? _value.count
           : count // ignore: cast_nullable_to_non_nullable
               as int,
-      lastPage: null == lastPage
-          ? _value.lastPage
-          : lastPage // ignore: cast_nullable_to_non_nullable
-              as int,
+      lastMessageId: freezed == lastMessageId
+          ? _value.lastMessageId
+          : lastMessageId // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -86,8 +86,8 @@ abstract class _$$MessageCountImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: "count") int count,
-      @JsonKey(name: "last_page") int lastPage});
+      {@JsonKey(name: 'count') int count,
+      @JsonKey(name: 'last_message_id') int? lastMessageId});
 }
 
 /// @nodoc
@@ -104,17 +104,17 @@ class __$$MessageCountImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? count = null,
-    Object? lastPage = null,
+    Object? lastMessageId = freezed,
   }) {
     return _then(_$MessageCountImpl(
       count: null == count
           ? _value.count
           : count // ignore: cast_nullable_to_non_nullable
               as int,
-      lastPage: null == lastPage
-          ? _value.lastPage
-          : lastPage // ignore: cast_nullable_to_non_nullable
-              as int,
+      lastMessageId: freezed == lastMessageId
+          ? _value.lastMessageId
+          : lastMessageId // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -123,22 +123,22 @@ class __$$MessageCountImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MessageCountImpl implements _MessageCount {
   const _$MessageCountImpl(
-      {@JsonKey(name: "count") required this.count,
-      @JsonKey(name: "last_page") required this.lastPage});
+      {@JsonKey(name: 'count') required this.count,
+      @JsonKey(name: 'last_message_id') this.lastMessageId});
 
   factory _$MessageCountImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessageCountImplFromJson(json);
 
   @override
-  @JsonKey(name: "count")
+  @JsonKey(name: 'count')
   final int count;
   @override
-  @JsonKey(name: "last_page")
-  final int lastPage;
+  @JsonKey(name: 'last_message_id')
+  final int? lastMessageId;
 
   @override
   String toString() {
-    return 'MessageCount(count: $count, lastPage: $lastPage)';
+    return 'MessageCount(count: $count, lastMessageId: $lastMessageId)';
   }
 
   @override
@@ -147,13 +147,13 @@ class _$MessageCountImpl implements _MessageCount {
         (other.runtimeType == runtimeType &&
             other is _$MessageCountImpl &&
             (identical(other.count, count) || other.count == count) &&
-            (identical(other.lastPage, lastPage) ||
-                other.lastPage == lastPage));
+            (identical(other.lastMessageId, lastMessageId) ||
+                other.lastMessageId == lastMessageId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, count, lastPage);
+  int get hashCode => Object.hash(runtimeType, count, lastMessageId);
 
   /// Create a copy of MessageCount
   /// with the given fields replaced by the non-null parameter values.
@@ -173,19 +173,19 @@ class _$MessageCountImpl implements _MessageCount {
 
 abstract class _MessageCount implements MessageCount {
   const factory _MessageCount(
-          {@JsonKey(name: "count") required final int count,
-          @JsonKey(name: "last_page") required final int lastPage}) =
+          {@JsonKey(name: 'count') required final int count,
+          @JsonKey(name: 'last_message_id') final int? lastMessageId}) =
       _$MessageCountImpl;
 
   factory _MessageCount.fromJson(Map<String, dynamic> json) =
       _$MessageCountImpl.fromJson;
 
   @override
-  @JsonKey(name: "count")
+  @JsonKey(name: 'count')
   int get count;
   @override
-  @JsonKey(name: "last_page")
-  int get lastPage;
+  @JsonKey(name: 'last_message_id')
+  int? get lastMessageId;
 
   /// Create a copy of MessageCount
   /// with the given fields replaced by the non-null parameter values.

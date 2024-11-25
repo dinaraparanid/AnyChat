@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:sqlite_async/sqlite3_common.dart';
 import 'package:sqlite_async/sqlite_async.dart';
 
@@ -36,35 +34,59 @@ extension ChatTableQueries on SqliteWriteContext {
     );
   }
 
-  Future<ResultSet> selectMessagePage({
-    required int page,
+  Future<ResultSet> messagePage({
+    required int lastMessageId,
     required int perPage,
-  }) {
-    final pageIndex = max(page - 1, 0);
-    final offset = pageIndex * perPage;
+  }) => execute('''
+    SELECT * FROM ${ChatTable.tableName}
+    WHERE ${ChatTable.fieldTimestamp} >= (
+      SELECT ${ChatTable.fieldTimestamp} FROM ${ChatTable.tableName}
+      WHERE ${ChatTable.fieldId} = ? LIMIT 1
+    )
+    LIMIT ?
+    ''',
+    [lastMessageId, perPage],
+  );
 
-    return execute('''
-      SELECT * FROM ${ChatTable.tableName}
-      LIMIT ? OFFSET ?
-      ''',
-      [perPage, offset],
-    );
-  }
-
-  Future<bool> hasPageAfter({
-    required int page,
+  Future<int?> pageBefore({
+    required int lastMessageId,
     required int perPage,
   }) async {
-    final offset = page * perPage;
-
     final res = await execute('''
-      SELECT * FROM ${ChatTable.tableName}
-      LIMIT 1 OFFSET ?
+      SELECT ${ChatTable.fieldId} FROM (
+        SELECT ${ChatTable.fieldId}, ${ChatTable.fieldTimestamp} FROM ${ChatTable.tableName}
+        WHERE ${ChatTable.fieldTimestamp} < (
+          SELECT ${ChatTable.fieldTimestamp} FROM ${ChatTable.tableName}
+          WHERE ${ChatTable.fieldId} = ? LIMIT 1
+        )
+        ORDER BY ${ChatTable.fieldTimestamp} DESC
+        LIMIT ?
+      )
+      ORDER BY ${ChatTable.fieldTimestamp} ASC
+      LIMIT 1
       ''',
-      [offset],
+      [lastMessageId, perPage],
     );
 
-    return res.isNotEmpty;
+    return res.singleOrNull?.messageId;
+  }
+
+  Future<int?> pageAfter({
+    required int lastMessageId,
+    required int perPage,
+  }) async {
+    final ResultSet res = await execute('''
+      SELECT ${ChatTable.fieldId} FROM ${ChatTable.tableName}
+      WHERE ${ChatTable.fieldTimestamp} >= (
+        SELECT ${ChatTable.fieldTimestamp} FROM ${ChatTable.tableName}
+        WHERE ${ChatTable.fieldId} = ? LIMIT 1
+      )
+      LIMIT ?
+      ''',
+      [lastMessageId, perPage + 1],
+    );
+
+    return res.length > perPage ? res[perPage].messageId : null;
   }
 
   Future<int> get totalMessageCount async {
@@ -74,4 +96,20 @@ extension ChatTableQueries on SqliteWriteContext {
 
     return res.rows[0][0] as int;
   }
+
+  Future<int?> get lastMessageId async {
+    final res = await execute(
+      '''
+      SELECT ${ChatTable.fieldId} FROM ${ChatTable.tableName}
+      ORDER BY ${ChatTable.fieldTimestamp} DESC
+      LIMIT 1
+      '''
+    );
+
+    return res.singleOrNull.messageId;
+  }
+}
+
+extension _MessageId on Row? {
+  int? get messageId => this?.values.firstOrNull as int?;
 }

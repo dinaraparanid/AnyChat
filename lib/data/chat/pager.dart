@@ -1,6 +1,7 @@
 import 'package:any_chat/core/config.dart';
 import 'package:any_chat/data/chat/preferences.dart';
 import 'package:any_chat/data/chat/provider/url.dart';
+import 'package:any_chat/data/chat/query.dart';
 import 'package:any_chat/domain/chat/message.dart';
 import 'package:any_chat/domain/chat/page.dart';
 import 'package:dio/dio.dart';
@@ -19,15 +20,16 @@ final class ChatPagingSource extends PagingSource<int, Message> {
   Future<LoadResult<int, Message>> load(LoadParams<int> params) =>
     _fetch(params.key);
 
-  Future<LoadResult<int, Message>> _fetch(int? page) async {
-    final queryPage = page
-      ?? await _preferences.currentPage
-      ?? await _preferences.totalPages;
+  Future<LoadResult<int, Message>> _fetch(int? messageId) async {
+    final queryMessageId = messageId ?? await _preferences.chatPosition;
 
     try {
       final response = await _client.get(
-        '${BaseUrlProvider.httpBaseUrl}/messages',
-        queryParameters: { 'page': queryPage, 'per_page': AppConfig.chatPageSize },
+        '${BaseUrlProvider.httpBaseUrl}${MessageQuery.pathMessages}',
+        queryParameters: {
+          MessageQuery.queryMessagesLastMessageId: queryMessageId,
+          MessageQuery.queryMessagesPerPage: AppConfig.chatPageSize,
+        },
       );
 
       final msgPage = MessagePage.fromJson(response.data);

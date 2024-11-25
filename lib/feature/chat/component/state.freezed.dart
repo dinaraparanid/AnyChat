@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$ChatState {
-  int? get scrollPosition => throw _privateConstructorUsedError;
+  int? get currentMessageId => throw _privateConstructorUsedError;
   int? get totalCount => throw _privateConstructorUsedError;
 
   /// Create a copy of ChatState
@@ -31,7 +31,7 @@ abstract class $ChatStateCopyWith<$Res> {
   factory $ChatStateCopyWith(ChatState value, $Res Function(ChatState) then) =
       _$ChatStateCopyWithImpl<$Res, ChatState>;
   @useResult
-  $Res call({int? scrollPosition, int? totalCount});
+  $Res call({int? currentMessageId, int? totalCount});
 }
 
 /// @nodoc
@@ -49,13 +49,13 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? scrollPosition = freezed,
+    Object? currentMessageId = freezed,
     Object? totalCount = freezed,
   }) {
     return _then(_value.copyWith(
-      scrollPosition: freezed == scrollPosition
-          ? _value.scrollPosition
-          : scrollPosition // ignore: cast_nullable_to_non_nullable
+      currentMessageId: freezed == currentMessageId
+          ? _value.currentMessageId
+          : currentMessageId // ignore: cast_nullable_to_non_nullable
               as int?,
       totalCount: freezed == totalCount
           ? _value.totalCount
@@ -73,7 +73,7 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       __$$ChatStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? scrollPosition, int? totalCount});
+  $Res call({int? currentMessageId, int? totalCount});
 }
 
 /// @nodoc
@@ -89,13 +89,13 @@ class __$$ChatStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? scrollPosition = freezed,
+    Object? currentMessageId = freezed,
     Object? totalCount = freezed,
   }) {
     return _then(_$ChatStateImpl(
-      scrollPosition: freezed == scrollPosition
-          ? _value.scrollPosition
-          : scrollPosition // ignore: cast_nullable_to_non_nullable
+      currentMessageId: freezed == currentMessageId
+          ? _value.currentMessageId
+          : currentMessageId // ignore: cast_nullable_to_non_nullable
               as int?,
       totalCount: freezed == totalCount
           ? _value.totalCount
@@ -108,16 +108,16 @@ class __$$ChatStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ChatStateImpl implements _ChatState {
-  const _$ChatStateImpl({this.scrollPosition, this.totalCount});
+  const _$ChatStateImpl({this.currentMessageId, this.totalCount});
 
   @override
-  final int? scrollPosition;
+  final int? currentMessageId;
   @override
   final int? totalCount;
 
   @override
   String toString() {
-    return 'ChatState(scrollPosition: $scrollPosition, totalCount: $totalCount)';
+    return 'ChatState(currentMessageId: $currentMessageId, totalCount: $totalCount)';
   }
 
   @override
@@ -125,14 +125,14 @@ class _$ChatStateImpl implements _ChatState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ChatStateImpl &&
-            (identical(other.scrollPosition, scrollPosition) ||
-                other.scrollPosition == scrollPosition) &&
+            (identical(other.currentMessageId, currentMessageId) ||
+                other.currentMessageId == currentMessageId) &&
             (identical(other.totalCount, totalCount) ||
                 other.totalCount == totalCount));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, scrollPosition, totalCount);
+  int get hashCode => Object.hash(runtimeType, currentMessageId, totalCount);
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -144,11 +144,11 @@ class _$ChatStateImpl implements _ChatState {
 }
 
 abstract class _ChatState implements ChatState {
-  const factory _ChatState({final int? scrollPosition, final int? totalCount}) =
-      _$ChatStateImpl;
+  const factory _ChatState(
+      {final int? currentMessageId, final int? totalCount}) = _$ChatStateImpl;
 
   @override
-  int? get scrollPosition;
+  int? get currentMessageId;
   @override
   int? get totalCount;
 

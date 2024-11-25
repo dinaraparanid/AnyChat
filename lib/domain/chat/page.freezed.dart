@@ -20,7 +20,6 @@ MessagePage _$MessagePageFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MessagePage {
-  int get page => throw _privateConstructorUsedError;
   int get perPage => throw _privateConstructorUsedError;
   List<Message> get messages => throw _privateConstructorUsedError;
   int? get next => throw _privateConstructorUsedError;
@@ -42,12 +41,7 @@ abstract class $MessagePageCopyWith<$Res> {
           MessagePage value, $Res Function(MessagePage) then) =
       _$MessagePageCopyWithImpl<$Res, MessagePage>;
   @useResult
-  $Res call(
-      {int page,
-      int perPage,
-      List<Message> messages,
-      int? next,
-      int? previous});
+  $Res call({int perPage, List<Message> messages, int? next, int? previous});
 }
 
 /// @nodoc
@@ -65,17 +59,12 @@ class _$MessagePageCopyWithImpl<$Res, $Val extends MessagePage>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? page = null,
     Object? perPage = null,
     Object? messages = null,
     Object? next = freezed,
     Object? previous = freezed,
   }) {
     return _then(_value.copyWith(
-      page: null == page
-          ? _value.page
-          : page // ignore: cast_nullable_to_non_nullable
-              as int,
       perPage: null == perPage
           ? _value.perPage
           : perPage // ignore: cast_nullable_to_non_nullable
@@ -104,12 +93,7 @@ abstract class _$$MessagePageImplCopyWith<$Res>
       __$$MessagePageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int page,
-      int perPage,
-      List<Message> messages,
-      int? next,
-      int? previous});
+  $Res call({int perPage, List<Message> messages, int? next, int? previous});
 }
 
 /// @nodoc
@@ -125,17 +109,12 @@ class __$$MessagePageImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? page = null,
     Object? perPage = null,
     Object? messages = null,
     Object? next = freezed,
     Object? previous = freezed,
   }) {
     return _then(_$MessagePageImpl(
-      page: null == page
-          ? _value.page
-          : page // ignore: cast_nullable_to_non_nullable
-              as int,
       perPage: null == perPage
           ? _value.perPage
           : perPage // ignore: cast_nullable_to_non_nullable
@@ -160,8 +139,7 @@ class __$$MessagePageImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MessagePageImpl implements _MessagePage {
   const _$MessagePageImpl(
-      {required this.page,
-      required this.perPage,
+      {required this.perPage,
       required final List<Message> messages,
       this.next,
       this.previous})
@@ -170,8 +148,6 @@ class _$MessagePageImpl implements _MessagePage {
   factory _$MessagePageImpl.fromJson(Map<String, dynamic> json) =>
       _$$MessagePageImplFromJson(json);
 
-  @override
-  final int page;
   @override
   final int perPage;
   final List<Message> _messages;
@@ -189,7 +165,7 @@ class _$MessagePageImpl implements _MessagePage {
 
   @override
   String toString() {
-    return 'MessagePage(page: $page, perPage: $perPage, messages: $messages, next: $next, previous: $previous)';
+    return 'MessagePage(perPage: $perPage, messages: $messages, next: $next, previous: $previous)';
   }
 
   @override
@@ -197,7 +173,6 @@ class _$MessagePageImpl implements _MessagePage {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$MessagePageImpl &&
-            (identical(other.page, page) || other.page == page) &&
             (identical(other.perPage, perPage) || other.perPage == perPage) &&
             const DeepCollectionEquality().equals(other._messages, _messages) &&
             (identical(other.next, next) || other.next == next) &&
@@ -207,7 +182,7 @@ class _$MessagePageImpl implements _MessagePage {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, page, perPage,
+  int get hashCode => Object.hash(runtimeType, perPage,
       const DeepCollectionEquality().hash(_messages), next, previous);
 
   /// Create a copy of MessagePage
@@ -228,8 +203,7 @@ class _$MessagePageImpl implements _MessagePage {
 
 abstract class _MessagePage implements MessagePage {
   const factory _MessagePage(
-      {required final int page,
-      required final int perPage,
+      {required final int perPage,
       required final List<Message> messages,
       final int? next,
       final int? previous}) = _$MessagePageImpl;
@@ -237,8 +211,6 @@ abstract class _MessagePage implements MessagePage {
   factory _MessagePage.fromJson(Map<String, dynamic> json) =
       _$MessagePageImpl.fromJson;
 
-  @override
-  int get page;
   @override
   int get perPage;
   @override
