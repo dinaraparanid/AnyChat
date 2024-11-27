@@ -1,8 +1,8 @@
 import 'package:fpdart/fpdart.dart';
 
 extension IterableExt<T> on Iterable<T> {
-  Iterable<T> distinct(Function(T)? keySelector) =>
-    _DistinctIterable(this, keySelector);
+  Iterable<T> distinct({Function(T)? key}) =>
+    _DistinctIterable(this, key);
 
   int? positionWhere(Function(T) predicate) {
     var i = 0;

@@ -79,6 +79,7 @@ final class ChatRepositoryImpl extends ChatRepository {
       );
 
       final data = MessageCount.fromJson(response.data);
+      // TODO че-то сохранить, чтобы понять, что список обновился
       return Either.right(data);
     } on Exception catch (e) {
       return Either.left(e);
