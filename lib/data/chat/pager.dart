@@ -23,7 +23,7 @@ final class ChatPagingSource extends PagingSource<int, Message> {
     _fetch(params.key);
 
   Future<LoadResult<int, Message>> _fetch(int? messageId) async {
-    final queryMessageId = messageId ?? await _preferences.chatPosition;
+    final queryMessageId = messageId ?? await _preferences.chatPositionId;
 
     try {
       final response = await _client.get(

@@ -99,7 +99,7 @@ final class _MessageTextFieldState extends ConsumerState<MessageTextField> {
           borderSide: BorderSide(color: theme.colors.text.onTextField),
         ),
         focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: theme.colors.button.sendIcon),
+          borderSide: BorderSide(color: theme.colors.button.icon),
         ),
       ),
       style: theme.typography.body.copyWith(
@@ -115,7 +115,7 @@ final class _MessageTextFieldState extends ConsumerState<MessageTextField> {
   Widget SendButton() {
     final theme = ref.watch(appThemeProvider);
     final isNotEnabled = widget.controller.text.isBlank;
-    final activeColor = theme.colors.button.sendIcon;
+    final activeColor = theme.colors.button.icon;
     final color = isNotEnabled ? activeColor.withOpacity(0.5) : activeColor;
 
     return IconButton(

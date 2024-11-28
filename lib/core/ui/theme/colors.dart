@@ -61,11 +61,13 @@ final class AppTextColors {
 @immutable
 final class AppButtonColors {
   final Color onTopBar;
-  final Color sendIcon;
+  final Color icon;
+  final Color fab;
 
   const AppButtonColors({
     this.onTopBar = _ChineseBlack,
-    this.sendIcon = _DarkVanilla,
+    this.icon = _DarkVanilla,
+    this.fab = _ChineseBlack,
   });
 }
 

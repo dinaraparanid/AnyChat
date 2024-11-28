@@ -17,7 +17,8 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$ChatState {
   int? get currentMessageId => throw _privateConstructorUsedError;
-  int? get totalCount => throw _privateConstructorUsedError;
+  int? get lastMessageId => throw _privateConstructorUsedError;
+  bool get isScrollDownButtonVisible => throw _privateConstructorUsedError;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -31,7 +32,10 @@ abstract class $ChatStateCopyWith<$Res> {
   factory $ChatStateCopyWith(ChatState value, $Res Function(ChatState) then) =
       _$ChatStateCopyWithImpl<$Res, ChatState>;
   @useResult
-  $Res call({int? currentMessageId, int? totalCount});
+  $Res call(
+      {int? currentMessageId,
+      int? lastMessageId,
+      bool isScrollDownButtonVisible});
 }
 
 /// @nodoc
@@ -50,17 +54,22 @@ class _$ChatStateCopyWithImpl<$Res, $Val extends ChatState>
   @override
   $Res call({
     Object? currentMessageId = freezed,
-    Object? totalCount = freezed,
+    Object? lastMessageId = freezed,
+    Object? isScrollDownButtonVisible = null,
   }) {
     return _then(_value.copyWith(
       currentMessageId: freezed == currentMessageId
           ? _value.currentMessageId
           : currentMessageId // ignore: cast_nullable_to_non_nullable
               as int?,
-      totalCount: freezed == totalCount
-          ? _value.totalCount
-          : totalCount // ignore: cast_nullable_to_non_nullable
+      lastMessageId: freezed == lastMessageId
+          ? _value.lastMessageId
+          : lastMessageId // ignore: cast_nullable_to_non_nullable
               as int?,
+      isScrollDownButtonVisible: null == isScrollDownButtonVisible
+          ? _value.isScrollDownButtonVisible
+          : isScrollDownButtonVisible // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -73,7 +82,10 @@ abstract class _$$ChatStateImplCopyWith<$Res>
       __$$ChatStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? currentMessageId, int? totalCount});
+  $Res call(
+      {int? currentMessageId,
+      int? lastMessageId,
+      bool isScrollDownButtonVisible});
 }
 
 /// @nodoc
@@ -90,17 +102,22 @@ class __$$ChatStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? currentMessageId = freezed,
-    Object? totalCount = freezed,
+    Object? lastMessageId = freezed,
+    Object? isScrollDownButtonVisible = null,
   }) {
     return _then(_$ChatStateImpl(
       currentMessageId: freezed == currentMessageId
           ? _value.currentMessageId
           : currentMessageId // ignore: cast_nullable_to_non_nullable
               as int?,
-      totalCount: freezed == totalCount
-          ? _value.totalCount
-          : totalCount // ignore: cast_nullable_to_non_nullable
+      lastMessageId: freezed == lastMessageId
+          ? _value.lastMessageId
+          : lastMessageId // ignore: cast_nullable_to_non_nullable
               as int?,
+      isScrollDownButtonVisible: null == isScrollDownButtonVisible
+          ? _value.isScrollDownButtonVisible
+          : isScrollDownButtonVisible // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -108,16 +125,21 @@ class __$$ChatStateImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$ChatStateImpl implements _ChatState {
-  const _$ChatStateImpl({this.currentMessageId, this.totalCount});
+  const _$ChatStateImpl(
+      {this.currentMessageId,
+      this.lastMessageId,
+      required this.isScrollDownButtonVisible});
 
   @override
   final int? currentMessageId;
   @override
-  final int? totalCount;
+  final int? lastMessageId;
+  @override
+  final bool isScrollDownButtonVisible;
 
   @override
   String toString() {
-    return 'ChatState(currentMessageId: $currentMessageId, totalCount: $totalCount)';
+    return 'ChatState(currentMessageId: $currentMessageId, lastMessageId: $lastMessageId, isScrollDownButtonVisible: $isScrollDownButtonVisible)';
   }
 
   @override
@@ -127,12 +149,16 @@ class _$ChatStateImpl implements _ChatState {
             other is _$ChatStateImpl &&
             (identical(other.currentMessageId, currentMessageId) ||
                 other.currentMessageId == currentMessageId) &&
-            (identical(other.totalCount, totalCount) ||
-                other.totalCount == totalCount));
+            (identical(other.lastMessageId, lastMessageId) ||
+                other.lastMessageId == lastMessageId) &&
+            (identical(other.isScrollDownButtonVisible,
+                    isScrollDownButtonVisible) ||
+                other.isScrollDownButtonVisible == isScrollDownButtonVisible));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, currentMessageId, totalCount);
+  int get hashCode => Object.hash(
+      runtimeType, currentMessageId, lastMessageId, isScrollDownButtonVisible);
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.
@@ -145,12 +171,16 @@ class _$ChatStateImpl implements _ChatState {
 
 abstract class _ChatState implements ChatState {
   const factory _ChatState(
-      {final int? currentMessageId, final int? totalCount}) = _$ChatStateImpl;
+      {final int? currentMessageId,
+      final int? lastMessageId,
+      required final bool isScrollDownButtonVisible}) = _$ChatStateImpl;
 
   @override
   int? get currentMessageId;
   @override
-  int? get totalCount;
+  int? get lastMessageId;
+  @override
+  bool get isScrollDownButtonVisible;
 
   /// Create a copy of ChatState
   /// with the given fields replaced by the non-null parameter values.

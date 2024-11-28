@@ -1,4 +1,7 @@
 mixin ChatStore {
-  Future<int?> get chatPosition;
-  Future<void> storeChatPosition(int messageId);
+  Stream<int?> get chatPositionIdStream;
+  Future<void> storeChatPositionId(int messageId);
+
+  Stream<int?> get lastMessageIdStream;
+  Future<void> storeLastMessageId(int messageId);
 }

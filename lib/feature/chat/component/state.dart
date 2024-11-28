@@ -6,7 +6,8 @@ part 'state.freezed.dart';
 abstract class ChatState with _$ChatState {
   const factory ChatState({
     int? currentMessageId,
-    int? totalCount,
+    int? lastMessageId,
+    required bool isScrollDownButtonVisible,
   }) = _ChatState;
 
   static const undefinedPosition = -1;

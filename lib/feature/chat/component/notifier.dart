@@ -2,6 +2,7 @@ import 'package:any_chat/domain/domain.dart';
 import 'package:any_chat/feature/chat/component/state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:super_paging/super_paging.dart';
 
 export 'state.dart';
@@ -13,19 +14,18 @@ final class ChatNotifier extends StateNotifier<ChatState> {
   ChatNotifier(ChatRepository repository) :
     _repository = repository,
     pager = repository.pager,
-    super(const ChatState()) {
+    super(const ChatState(isScrollDownButtonVisible: false)) {
     _init();
   }
 
-  Future<void> _init() async {
-    final position = await _repository.chatPosition;
-    final countResponse = await _repository.messageCount;
-
-    state = state.copyWith(
-      currentMessageId: position ?? ChatState.undefinedPosition,
-      totalCount: countResponse.map((r) => r.count).getOrElse((_) => 0),
-    );
-  }
+  void _init() => CombineLatestStream.combine2(
+    _repository.lastMessageIdStream,
+    _repository.chatPositionIdStream,
+      (lastMessageId, chatPositionId) => state.copyWith(
+      currentMessageId: chatPositionId ?? ChatState.undefinedPosition,
+      lastMessageId: lastMessageId,
+    ),
+  ).listen((newState) => state = newState);
 
   Future<void> sendMessage({
     required String message,
@@ -39,7 +39,7 @@ final class ChatNotifier extends StateNotifier<ChatState> {
   Future<void> refresh() => pager.refresh();
 
   Future<void> updateChatPosition(int messageId) async {
-    await _repository.storeChatPosition(messageId);
+    await _repository.storeChatPositionId(messageId);
     state = state.copyWith(currentMessageId: messageId);
   }
 
@@ -54,4 +54,9 @@ final class ChatNotifier extends StateNotifier<ChatState> {
 
     return !item.createdAt.eqvDay(prevItem.createdAt);
   }
+
+  void updateScrollDownButtonVisibility({required Set<int> visibleIds}) =>
+    state = state.copyWith(
+      isScrollDownButtonVisible: !visibleIds.contains(state.lastMessageId),
+    );
 }

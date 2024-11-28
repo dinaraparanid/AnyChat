@@ -29,11 +29,14 @@ dependencies:
   web_socket_channel: ^3.0.1
   connectivity_plus: ^6.1.0
   stream_transform: ^2.1.0
-  super_paging: ^0.1.0
   tuple: ^2.0.2
   quiver: ^3.2.2
-  shared_preferences: ^2.3.2
+  rx_shared_preferences: ^4.0.0
+  rxdart: ^0.28.0
   scroll_to_index: ^3.0.1
+
+  super_paging:
+    git: https://github.com/dinaraparanid/super_paging.git
 
 dev_dependencies:
   flutter_test:

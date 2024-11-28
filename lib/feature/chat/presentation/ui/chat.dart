@@ -63,10 +63,15 @@ final class _ChatState extends ConsumerState<Chat> {
 
   void scrollListener() {
     final position = scrollController.positionIndex;
-    final currentMessageId = position?.let(pager.items.elementAt).id;
+    final visibleIndices = scrollController.visibleIndices;
+    final currentMessageId = position?.let(_messageIdFromIndex);
+    final visibleIds = visibleIndices.map(_messageIdFromIndex).toSet();
     final notifier = ref.read(chatNotifierProvider.notifier);
     currentMessageId?.let(notifier.updateChatPosition);
+    notifier.updateScrollDownButtonVisibility(visibleIds: visibleIds);
   }
+
+  int _messageIdFromIndex(int position) => pager.items.elementAt(position).id;
 
   @override
   Widget build(BuildContext context) {

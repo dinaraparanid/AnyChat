@@ -6,6 +6,7 @@ import 'package:any_chat/data/chat/preferences.dart';
 import 'package:any_chat/data/chat/provider/url.dart';
 import 'package:any_chat/domain/chat/count.dart';
 import 'package:any_chat/domain/domain.dart';
+import 'package:any_chat/utils/functional.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
@@ -79,7 +80,7 @@ final class ChatRepositoryImpl extends ChatRepository {
       );
 
       final data = MessageCount.fromJson(response.data);
-      // TODO че-то сохранить, чтобы понять, что список обновился
+      data.lastMessageId?.let(storeLastMessageId);
       return Either.right(data);
     } on Exception catch (e) {
       return Either.left(e);
@@ -87,9 +88,16 @@ final class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<int?> get chatPosition => preferences.chatPosition;
+  Stream<int?> get chatPositionIdStream => preferences.chatPositionIdStream;
 
   @override
-  Future<void> storeChatPosition(int messageId) =>
-    preferences.storeChatPosition(messageId);
+  Future<void> storeChatPositionId(int messageId) =>
+    preferences.storeChatPositionId(messageId);
+
+  @override
+  Stream<int?> get lastMessageIdStream => preferences.lastMessageIdStream;
+
+  @override
+  Future<void> storeLastMessageId(int messageId) =>
+    preferences.storeLastMessageId(messageId);
 }
