@@ -9,8 +9,8 @@ import 'package:logger/logger.dart';
 
 typedef ConnectedRequest = void Function(WebSocket client);
 typedef MessagingRequest = void Function(String message);
-typedef UpdatePagerRequest = Future<MessagePage> Function(int? lastMessageId, int perPage);
-typedef UpdateCounterRequest = Future<MessageCount> Function();
+typedef UpdatePagerRequest = Future<MessagePage> Function({required int perPage, int? lastMessageId});
+typedef UpdateCounterRequest = Future<MessageCount> Function({int? lastMessageId});
 typedef DisconnectedRequest = void Function(WebSocket client);
 
 final class Router {

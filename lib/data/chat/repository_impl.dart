@@ -4,6 +4,7 @@ import 'package:any_chat/core/config.dart';
 import 'package:any_chat/data/chat/pager.dart';
 import 'package:any_chat/data/chat/preferences.dart';
 import 'package:any_chat/data/chat/provider/url.dart';
+import 'package:any_chat/data/chat/query.dart';
 import 'package:any_chat/domain/chat/count.dart';
 import 'package:any_chat/domain/domain.dart';
 import 'package:any_chat/utils/functional.dart';
@@ -45,11 +46,13 @@ final class ChatRepositoryImpl extends ChatRepository {
             Uri.parse('${BaseUrlProvider.webSocketBaseUrl}/messages')
           );
 
-          await messageCount; // update local storage
+          // update local storage
+          await messageCount(lastMessageId: await lastSeenMessageId);
           await socketChannel!.ready;
 
           await for (final _ in socketChannel!.stream) {
-            await messageCount; // update local storage
+            // update local storage
+            await messageCount(lastMessageId: await lastSeenMessageId);
             await pager.refresh(resetPages: false);
           }
         } else {
@@ -73,15 +76,19 @@ final class ChatRepositoryImpl extends ChatRepository {
   }
 
   @override
-  Future<Either<Exception, MessageCount>> get messageCount async {
+  Future<Either<Exception, MessageCount>> messageCount({int? lastMessageId}) async {
     try {
       final response = await client.get(
-        '${BaseUrlProvider.httpBaseUrl}/messages/count',
+        '${BaseUrlProvider.httpBaseUrl}/messages/count'
+            '?${MessageQuery.queryMessagesLastMessageId}=$lastMessageId',
       );
 
-      final data = MessageCount.fromJson(response.data);
-      data.lastMessageId?.let(storeLastMessageId);
-      return Either.right(data);
+      return Either.right(
+        MessageCount.fromJson(response.data).also((data) {
+          data.lastMessageId?.let(storeLastMessageId);
+          storeUnreadMessageCount(data.count);
+        }),
+      );
     } on Exception catch (e) {
       return Either.left(e);
     }
@@ -100,4 +107,22 @@ final class ChatRepositoryImpl extends ChatRepository {
   @override
   Future<void> storeLastMessageId(int messageId) =>
     preferences.storeLastMessageId(messageId);
+
+  @override
+  Future<int?> get lastSeenMessageId => preferences.lastSeenMessageId;
+
+  @override
+  Stream<int?> get lastSeenMessageIdStream =>
+    preferences.lastSeenMessageIdStream;
+
+  @override
+  Future<void> storeLastSeenMessageId(int messageId) =>
+    preferences.storeLastSeenMessageId(messageId);
+
+  @override
+  Stream<int> get unreadMessageCount => preferences.unreadMessageCount;
+
+  @override
+  Future<void> storeUnreadMessageCount(int count) =>
+    preferences.storeUnreadMessageCount(count);
 }

@@ -11,4 +11,6 @@ abstract class ChatRepository {
   Future<int> get totalMessageCount;
 
   Future<int?> get lastMessageId;
+
+  Future<int> messageCountAfterId(int messageId);
 }

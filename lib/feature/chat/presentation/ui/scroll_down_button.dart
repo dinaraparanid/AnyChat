@@ -1,6 +1,5 @@
 import 'package:any_chat/core/ui/theme/theme.dart';
 import 'package:any_chat/feature/chat/component/provider.dart';
-import 'package:any_chat/utils/scroll.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

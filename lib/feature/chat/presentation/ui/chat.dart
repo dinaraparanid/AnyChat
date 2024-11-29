@@ -8,6 +8,7 @@ import 'package:any_chat/feature/chat/presentation/ui/message.dart';
 import 'package:any_chat/utils/date_time.dart';
 import 'package:any_chat/utils/functional.dart';
 import 'package:any_chat/utils/scroll.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -62,12 +63,17 @@ final class _ChatState extends ConsumerState<Chat> {
   }
 
   void scrollListener() {
-    final position = scrollController.positionIndex;
+    final middlePosition = scrollController.positionIndex;
     final visibleIndices = scrollController.visibleIndices;
-    final currentMessageId = position?.let(_messageIdFromIndex);
+    final lastVisiblePosition = visibleIndices.maxOrNull;
+
+    final currentMessageId = middlePosition?.let(_messageIdFromIndex);
+    final lastVisibleMessageId = lastVisiblePosition?.let(_messageIdFromIndex);
     final visibleIds = visibleIndices.map(_messageIdFromIndex).toSet();
+
     final notifier = ref.read(chatNotifierProvider.notifier);
     currentMessageId?.let(notifier.updateChatPosition);
+    lastVisibleMessageId?.let(notifier.updateLastSeenMessageId);
     notifier.updateScrollDownButtonVisibility(visibleIds: visibleIds);
   }
 

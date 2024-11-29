@@ -46,6 +46,10 @@ final class ChatRepositoryImpl extends ChatRepository {
 
   @override
   Future<int?> get lastMessageId => _db.lastMessageId;
+
+  @override
+  Future<int> messageCountAfterId(int messageId) =>
+    _db.messageCountAfterId(messageId);
 }
 
 extension _Messages on SqliteWriteContext {

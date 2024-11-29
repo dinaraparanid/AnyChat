@@ -43,6 +43,14 @@ final class ChatNotifier extends StateNotifier<ChatState> {
     state = state.copyWith(currentMessageId: messageId);
   }
 
+  Future<void> updateLastSeenMessageId(int messageId) async {
+    final currentLastSeenId = await _repository.lastSeenMessageId;
+    if (currentLastSeenId == null) return;
+    if (currentLastSeenId > messageId) {
+      await _repository.storeLastSeenMessageId(messageId);
+    }
+  }
+
   bool isFirstMessageForDate(int messageIndex) {
     if (messageIndex == 0) return true;
 

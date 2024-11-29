@@ -22,7 +22,10 @@ Future<void> onMessagesPage({
     ?.let(int.tryParse)
     ?? AppConfig.chatPageSize;
 
-  final messagePage = await onUpdatePager(lastMessageId, perPage);
+  final messagePage = await onUpdatePager(
+    lastMessageId: lastMessageId,
+    perPage: perPage,
+  );
 
   request.response
     ..statusCode = HttpStatus.ok

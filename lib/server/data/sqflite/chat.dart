@@ -89,6 +89,21 @@ extension ChatTableQueries on SqliteWriteContext {
     return res.length > perPage ? res[perPage].messageId : null;
   }
 
+  Future<int> messageCountAfterId(int messageId) async {
+    final res = await execute(
+      '''
+      SELECT COUNT(${ChatTable.fieldId}) FROM ${ChatTable.tableName}
+      WHERE ${ChatTable.fieldTimestamp} > (
+        SELECT ${ChatTable.fieldTimestamp} FROM ${ChatTable.tableName}
+        WHERE ${ChatTable.fieldId} = ? LIMIT 1
+      )
+      ''',
+      [messageId]
+    );
+
+    return res.rows[0][0] as int;
+  }
+
   Future<int> get totalMessageCount async {
     final res = await execute(
       'SELECT COUNT(${ChatTable.fieldId}) FROM ${ChatTable.tableName}'

@@ -5,6 +5,7 @@ import 'package:any_chat/server/di/server_module.dart';
 import 'package:any_chat/server/domain/chat/repository.dart';
 import 'package:any_chat/server/rooting/router.dart';
 import 'package:any_chat/server/rooting/signal.dart';
+import 'package:any_chat/utils/functional.dart';
 import 'package:logger/logger.dart';
 
 final _host = InternetAddress.loopbackIPv4;
@@ -35,13 +36,17 @@ Future<void> runServer() async {
           client.add(ServerSignal.update);
         }
       },
-      onUpdatePager: (lastMessageId, perPage) async =>
+      onUpdatePager: ({required perPage, lastMessageId}) async =>
         chatRepository.getMessagePage(
           lastMessageId: lastMessageId,
           perPage: perPage,
         ),
-      onUpdateCounter: () async => MessageCount(
-        count: await chatRepository.totalMessageCount,
+      onUpdateCounter: ({lastMessageId}) async => MessageCount(
+        count: await (
+          lastMessageId
+            ?.let(chatRepository.messageCountAfterId)
+            ?? chatRepository.totalMessageCount
+        ),
         lastMessageId: await chatRepository.lastMessageId,
       ),
     );
